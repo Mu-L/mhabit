@@ -18,7 +18,10 @@ import 'package:provider/provider.dart';
 import '../../../extensions/colorscheme_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../providers/app_ui/app_debugger.dart';
+import '../../../storage/profile/handlers.dart';
+import '../../../storage/profile_provider.dart';
 import '../../common/widgets.dart';
+import 'changelog_banner_sliver.dart';
 
 class HabitDisplayDevelopSliverList extends StatefulWidget {
   final void Function(int count)? onAddCountHabitsPressed;
@@ -34,7 +37,7 @@ class HabitDisplayDevelopSliverList extends StatefulWidget {
 
 class _HabitDisplayDevelopSliverList
     extends State<HabitDisplayDevelopSliverList> {
-  Widget _buildDebugHabitsButton(BuildContext context, int count) {
+  Widget _buildDebugHabitsButton(int count) {
     return ListTile(
       dense: true,
       visualDensity: VisualDensity.compact,
@@ -44,7 +47,7 @@ class _HabitDisplayDevelopSliverList
     );
   }
 
-  Widget _buildNotificationTextButton(BuildContext context) {
+  Widget _buildNotificationTextButton() {
     return ListTile(
       dense: true,
       visualDensity: VisualDensity.compact,
@@ -57,7 +60,7 @@ class _HabitDisplayDevelopSliverList
     );
   }
 
-  Widget _buildCheckPendingNotificationTextButton(BuildContext context) {
+  Widget _buildCheckPendingNotificationTextButton() {
     return ListTile(
       dense: true,
       visualDensity: VisualDensity.compact,
@@ -67,13 +70,44 @@ class _HabitDisplayDevelopSliverList
     );
   }
 
-  Widget _buildActiveNotificationTextButton(BuildContext context) {
+  Widget _buildActiveNotificationTextButton() {
     return ListTile(
       dense: true,
       visualDensity: VisualDensity.compact,
       leading: const Icon(Icons.notifications_active_outlined),
       title: const Text("Check active notifications"),
       onTap: () => showNotificationActivatedDialog(context: context),
+    );
+  }
+
+  Widget _buildChangelogBannerButton() {
+    return ListTile(
+      dense: true,
+      visualDensity: VisualDensity.compact,
+      leading: const Icon(Icons.celebration_outlined),
+      title: const Text('Show Changelog Banner'),
+      onTap: () => showChangelogBanner(context),
+    );
+  }
+
+  Widget _buildClearChangelogVersionButton() {
+    return ListTile(
+      dense: true,
+      visualDensity: VisualDensity.compact,
+      leading: const Icon(Icons.cleaning_services_outlined),
+      title: const Text('Clear last changelog version'),
+      subtitle: const Text('Restart to re-trigger the banner'),
+      onTap: () async {
+        await context
+            .read<ProfileViewModel>()
+            .getHandler<AppLastChangelogVersionProfileHandler>()
+            ?.remove();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Changelog version cleared')),
+          );
+        }
+      },
     );
   }
 
@@ -92,12 +126,14 @@ class _HabitDisplayDevelopSliverList
             style: TextStyle(color: Theme.of(context).colorScheme.outline),
           ),
           children: [
-            _buildDebugHabitsButton(context, 1),
-            _buildDebugHabitsButton(context, 20),
-            _buildDebugHabitsButton(context, 100),
-            _buildNotificationTextButton(context),
-            _buildActiveNotificationTextButton(context),
-            _buildCheckPendingNotificationTextButton(context),
+            _buildDebugHabitsButton(1),
+            _buildDebugHabitsButton(20),
+            _buildDebugHabitsButton(100),
+            _buildNotificationTextButton(),
+            _buildActiveNotificationTextButton(),
+            _buildCheckPendingNotificationTextButton(),
+            _buildChangelogBannerButton(),
+            _buildClearChangelogVersionButton(),
           ],
         ),
       ),

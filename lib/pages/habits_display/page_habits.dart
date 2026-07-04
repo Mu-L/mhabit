@@ -991,6 +991,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
               slivers: [
                 buildAppbar(context),
                 buildCalendarBar(context),
+                const ChangelogBannerSliver(),
                 const PinnedHeaderSliver(child: HabitDivider(height: 1)),
                 buildHabits(context),
                 buildDevelopSliverList(context),
