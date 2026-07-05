@@ -513,6 +513,10 @@
     "appSetting_export_subtitleText": "將習慣匯出為 JSON 格式，此檔案可以再匯入。",
     "appSetting_import_titleText": "匯入",
     "appSetting_import_subtitleText": "從 JSON 檔案匯入習慣。",
+    "appSetting_thirdPartyImport_titleText": "第三方匯入",
+    "appSetting_thirdPartyImport_subtitleText": "從其他習慣追蹤應用匯入習慣。",
+    "appSetting_thirdPartyImport_provider_loopName": "Loop Habit Tracker",
+    "appSetting_thirdPartyImport_provider_versionHint": "支援 CSV（測試相容 <ver/>）",
     "appSetting_importDialog_confirmTitle": "確認匯入 {count} 個習慣？",
     "@appSetting_importDialog_confirmTitle": {
         "placeholders": {
@@ -523,6 +527,19 @@
         }
     },
     "appSetting_importDialog_confirmSubtitle": "注意：匯入不會刪除現有的習慣。",
+    "appSetting_importConfirmDialog_sourceLabel": "來源: {provider}",
+    "@appSetting_importConfirmDialog_sourceLabel": {
+        "placeholders": {
+            "provider": {
+                "type": "String",
+                "description": "第三方匯入來源名稱"
+            }
+        }
+    },
+    "appSetting_thirdPartyImport_error_fileReadError": "讀取所選檔案失敗。",
+    "appSetting_thirdPartyImport_error_noHabitsFound": "匯入檔案中未找到習慣。",
+    "appSetting_thirdPartyImport_error_parseError": "解析匯入檔案失敗",
+    "appSetting_thirdPartyImport_error_unknown": "匯入時發生意外錯誤。",
     "appSetting_importDialog_confirm_confirmText": "確認",
     "appSetting_importDialog_confirm_cancelText": "取消",
     "appSetting_importDialog_importingTitle": "已匯入 {completeCount}/{totalCount}",

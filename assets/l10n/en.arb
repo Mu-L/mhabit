@@ -730,6 +730,14 @@
     "@appSetting_import_titleText": {},
     "appSetting_import_subtitleText": "Import habits from json file.",
     "@appSetting_import_subtitleText": {},
+    "appSetting_thirdPartyImport_titleText": "Import from third-party",
+    "@appSetting_thirdPartyImport_titleText": {},
+    "appSetting_thirdPartyImport_subtitleText": "Import habits from other habit tracker apps",
+    "@appSetting_thirdPartyImport_subtitleText": {},
+    "appSetting_thirdPartyImport_provider_loopName": "Loop Habit Tracker",
+    "@appSetting_thirdPartyImport_provider_loopName": {},
+    "appSetting_thirdPartyImport_provider_versionHint": "Supports CSV (tested up to <ver/>)",
+    "@appSetting_thirdPartyImport_provider_versionHint": {},
     "appSetting_importDialog_confirmTitle": "Confirm import {count} habits?",
     "@appSetting_importDialog_confirmTitle": {
         "placeholders": {
@@ -741,6 +749,23 @@
     },
     "appSetting_importDialog_confirmSubtitle": "Note: Import doesn't delete existing habits.",
     "@appSetting_importDialog_confirmSubtitle": {},
+    "appSetting_importConfirmDialog_sourceLabel": "Source: {provider}",
+    "@appSetting_importConfirmDialog_sourceLabel": {
+        "placeholders": {
+            "provider": {
+                "type": "String",
+                "description": "Third-party provider display name"
+            }
+        }
+    },
+    "appSetting_thirdPartyImport_error_fileReadError": "Failed to read the selected file.",
+    "@appSetting_thirdPartyImport_error_fileReadError": {},
+    "appSetting_thirdPartyImport_error_noHabitsFound": "No habits found in the import file.",
+    "@appSetting_thirdPartyImport_error_noHabitsFound": {},
+    "appSetting_thirdPartyImport_error_parseError": "Failed to parse import file",
+    "@appSetting_thirdPartyImport_error_parseError": {},
+    "appSetting_thirdPartyImport_error_unknown": "An unexpected error occurred during import.",
+    "@appSetting_thirdPartyImport_error_unknown": {},
     "appSetting_importDialog_confirm_confirmText": "confirm",
     "@appSetting_importDialog_confirm_confirmText": {},
     "appSetting_importDialog_confirm_cancelText": "cancel",

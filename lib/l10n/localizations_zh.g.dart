@@ -838,12 +838,43 @@ class L10nZh extends L10n {
   String get appSetting_import_subtitleText => '从 JSON 文件导入习惯。';
 
   @override
+  String get appSetting_thirdPartyImport_titleText => '第三方导入';
+
+  @override
+  String get appSetting_thirdPartyImport_subtitleText => '从其他习惯追踪应用导入习惯。';
+
+  @override
+  String get appSetting_thirdPartyImport_provider_loopName =>
+      'Loop Habit Tracker';
+
+  @override
+  String get appSetting_thirdPartyImport_provider_versionHint =>
+      '支持 CSV（测试兼容 <ver/>）';
+
+  @override
   String appSetting_importDialog_confirmTitle(int count) {
     return '确认导入 $count 个习惯？';
   }
 
   @override
   String get appSetting_importDialog_confirmSubtitle => '注意：导入不会删除现有的习惯。';
+
+  @override
+  String appSetting_importConfirmDialog_sourceLabel(String provider) {
+    return '来源: $provider';
+  }
+
+  @override
+  String get appSetting_thirdPartyImport_error_fileReadError => '读取所选文件失败。';
+
+  @override
+  String get appSetting_thirdPartyImport_error_noHabitsFound => '导入文件中未找到习惯。';
+
+  @override
+  String get appSetting_thirdPartyImport_error_parseError => '解析导入文件失败';
+
+  @override
+  String get appSetting_thirdPartyImport_error_unknown => '导入时发生意外错误。';
 
   @override
   String get appSetting_importDialog_confirm_confirmText => '确认';
@@ -2541,12 +2572,43 @@ class L10nZhHant extends L10nZh {
   String get appSetting_import_subtitleText => '從 JSON 檔案匯入習慣。';
 
   @override
+  String get appSetting_thirdPartyImport_titleText => '第三方匯入';
+
+  @override
+  String get appSetting_thirdPartyImport_subtitleText => '從其他習慣追蹤應用匯入習慣。';
+
+  @override
+  String get appSetting_thirdPartyImport_provider_loopName =>
+      'Loop Habit Tracker';
+
+  @override
+  String get appSetting_thirdPartyImport_provider_versionHint =>
+      '支援 CSV（測試相容 <ver/>）';
+
+  @override
   String appSetting_importDialog_confirmTitle(int count) {
     return '確認匯入 $count 個習慣？';
   }
 
   @override
   String get appSetting_importDialog_confirmSubtitle => '注意：匯入不會刪除現有的習慣。';
+
+  @override
+  String appSetting_importConfirmDialog_sourceLabel(String provider) {
+    return '來源: $provider';
+  }
+
+  @override
+  String get appSetting_thirdPartyImport_error_fileReadError => '讀取所選檔案失敗。';
+
+  @override
+  String get appSetting_thirdPartyImport_error_noHabitsFound => '匯入檔案中未找到習慣。';
+
+  @override
+  String get appSetting_thirdPartyImport_error_parseError => '解析匯入檔案失敗';
+
+  @override
+  String get appSetting_thirdPartyImport_error_unknown => '匯入時發生意外錯誤。';
 
   @override
   String get appSetting_importDialog_confirm_confirmText => '確認';

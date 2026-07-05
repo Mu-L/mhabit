@@ -186,6 +186,7 @@ dependencies:
 
   # Code Generation
   vector_graphics: ^1.2.2
+  csv: ^8.0.0
 
 dev_dependencies:
   flutter_test:
@@ -249,6 +250,7 @@ flutter:
     - assets/sql/
     - assets/images/
     - assets/logo/icon-momo.svg
+    - assets/icons/uhabit_icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

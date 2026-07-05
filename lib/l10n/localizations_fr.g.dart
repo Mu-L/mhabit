@@ -883,6 +883,21 @@ class L10nFr extends L10n {
       'Importer les habitudes à partir d’un fichier au format JSON.';
 
   @override
+  String get appSetting_thirdPartyImport_titleText => 'Import from third-party';
+
+  @override
+  String get appSetting_thirdPartyImport_subtitleText =>
+      'Import habits from other habit tracker apps';
+
+  @override
+  String get appSetting_thirdPartyImport_provider_loopName =>
+      'Loop Habit Tracker';
+
+  @override
+  String get appSetting_thirdPartyImport_provider_versionHint =>
+      'Supports CSV (tested up to <ver/>)';
+
+  @override
   String appSetting_importDialog_confirmTitle(int count) {
     return 'Confirmer l’import de $count habitudes ?';
   }
@@ -890,6 +905,27 @@ class L10nFr extends L10n {
   @override
   String get appSetting_importDialog_confirmSubtitle =>
       'Note: l’import ne supprime pas les habitudes existantes.';
+
+  @override
+  String appSetting_importConfirmDialog_sourceLabel(String provider) {
+    return 'Source: $provider';
+  }
+
+  @override
+  String get appSetting_thirdPartyImport_error_fileReadError =>
+      'Failed to read the selected file.';
+
+  @override
+  String get appSetting_thirdPartyImport_error_noHabitsFound =>
+      'No habits found in the import file.';
+
+  @override
+  String get appSetting_thirdPartyImport_error_parseError =>
+      'Failed to parse import file';
+
+  @override
+  String get appSetting_thirdPartyImport_error_unknown =>
+      'An unexpected error occurred during import.';
 
   @override
   String get appSetting_importDialog_confirm_confirmText => 'Confirmer';

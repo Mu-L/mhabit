@@ -23,6 +23,7 @@ import 'package:tuple/tuple.dart';
 
 import '../../common/consts.dart';
 import '../../common/enums.dart';
+import '../../common/exceptions.dart';
 import '../../common/flavor.dart';
 import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
@@ -45,6 +46,7 @@ import '../../providers/workflow/app_reminder.dart';
 import '../../providers/workflow/app_settings.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
 import '../../providers/workflow/habits_file_importer.dart';
+import '../../providers/workflow/thirdparty_file_importer.dart';
 import '../../storage/db_helper_provider.dart';
 import '../../storage/profile_provider.dart';
 import '../../utils/app_path_provider.dart';
@@ -80,6 +82,7 @@ Future<void> naviToAppSettingPage({required BuildContext context}) async {
 ///   - [HabitsRecordScrollBehaviorViewModel]
 /// - Required for callback:
 ///   - [HabitFileImportRunner]
+///   - [ThirdPartyImportOwner]
 ///   - [AppSettingsAccess]
 class AppSettingPage extends StatelessWidget {
   const AppSettingPage({super.key});
@@ -299,8 +302,72 @@ class _PageState extends State<_Page> with XShare {
       context: context,
       habitsData: habitsData,
       habitCount: habitCount,
-      importer: context.read<HabitFileImportRunner>(),
+      importer: fileImporter,
     );
+  }
+
+  void _onThirdPartyImportTilePressed() async {
+    if (!mounted) return;
+
+    final provider = await showThirdPartyImportProviderDialog(context);
+    if (!mounted || provider == null) return;
+
+    final Iterable<Object?>? habitsData;
+    try {
+      habitsData = await context.read<ThirdPartyImportOwner>().loadHabitsData(
+        provider,
+      );
+    } on ThirdPartyImportException catch (e) {
+      appLog.import.error(
+        '$widget._onThirdPartyImportTilePressed',
+        ex: ['Invalid file format', e.toString()],
+        error: e,
+      );
+      if (!mounted) return;
+      _showThirdPartyImportError(context, e.type);
+      return;
+    }
+
+    if (!mounted || habitsData == null) return;
+
+    final fileImporter = context.read<HabitFileImportRunner>();
+    final habitCount = fileImporter.importHabitsDataDryRun(habitsData);
+    if (!mounted) return;
+    showAppSettingImportHabitsConfirmDialog(
+      context: context,
+      habitsData: habitsData,
+      habitCount: habitCount,
+      importer: fileImporter,
+      providerName: provider.displayName,
+    );
+  }
+
+  void _showThirdPartyImportError(
+    BuildContext context,
+    ThirdPartyImportErrorType type,
+  ) {
+    final snackBar = buildSnackBarWithDismiss(
+      context,
+      content: L10nBuilder(
+        builder: (context, l10n) {
+          final text = switch (type) {
+            ThirdPartyImportErrorType.fileReadError =>
+              l10n?.appSetting_thirdPartyImport_error_fileReadError,
+            ThirdPartyImportErrorType.noHabitsFound =>
+              l10n?.appSetting_thirdPartyImport_error_noHabitsFound,
+            ThirdPartyImportErrorType.parseError =>
+              l10n?.appSetting_thirdPartyImport_error_parseError,
+            ThirdPartyImportErrorType.unknown =>
+              l10n?.appSetting_thirdPartyImport_error_unknown,
+          };
+          return Text(text ?? 'Import failed');
+        },
+      ),
+      duration: kAppUndoDialogShowDuration,
+    );
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(snackBar);
   }
 
   void _onResetConfigsTilePressed() async {
@@ -632,6 +699,19 @@ class _PageState extends State<_Page> with XShare {
               ? Text(l10n.appSetting_import_subtitleText)
               : const Text("Import habits from json file"),
           onTap: _onImportAllTilePressed,
+        ),
+      ),
+      L10nBuilder(
+        builder: (context, l10n) => ListTile(
+          title: Text(
+            l10n?.appSetting_thirdPartyImport_titleText ??
+                'Import from third-party',
+          ),
+          subtitle: Text(
+            l10n?.appSetting_thirdPartyImport_subtitleText ??
+                'Import habits from other habit tracker apps',
+          ),
+          onTap: _onThirdPartyImportTilePressed,
         ),
       ),
       L10nBuilder(

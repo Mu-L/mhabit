@@ -1520,6 +1520,30 @@ abstract class L10n {
   /// **'Import habits from json file.'**
   String get appSetting_import_subtitleText;
 
+  /// No description provided for @appSetting_thirdPartyImport_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from third-party'**
+  String get appSetting_thirdPartyImport_titleText;
+
+  /// No description provided for @appSetting_thirdPartyImport_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Import habits from other habit tracker apps'**
+  String get appSetting_thirdPartyImport_subtitleText;
+
+  /// No description provided for @appSetting_thirdPartyImport_provider_loopName.
+  ///
+  /// In en, this message translates to:
+  /// **'Loop Habit Tracker'**
+  String get appSetting_thirdPartyImport_provider_loopName;
+
+  /// No description provided for @appSetting_thirdPartyImport_provider_versionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Supports CSV (tested up to <ver/>)'**
+  String get appSetting_thirdPartyImport_provider_versionHint;
+
   /// No description provided for @appSetting_importDialog_confirmTitle.
   ///
   /// In en, this message translates to:
@@ -1531,6 +1555,36 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Note: Import doesn\'t delete existing habits.'**
   String get appSetting_importDialog_confirmSubtitle;
+
+  /// No description provided for @appSetting_importConfirmDialog_sourceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Source: {provider}'**
+  String appSetting_importConfirmDialog_sourceLabel(String provider);
+
+  /// No description provided for @appSetting_thirdPartyImport_error_fileReadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to read the selected file.'**
+  String get appSetting_thirdPartyImport_error_fileReadError;
+
+  /// No description provided for @appSetting_thirdPartyImport_error_noHabitsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No habits found in the import file.'**
+  String get appSetting_thirdPartyImport_error_noHabitsFound;
+
+  /// No description provided for @appSetting_thirdPartyImport_error_parseError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to parse import file'**
+  String get appSetting_thirdPartyImport_error_parseError;
+
+  /// No description provided for @appSetting_thirdPartyImport_error_unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred during import.'**
+  String get appSetting_thirdPartyImport_error_unknown;
 
   /// No description provided for @appSetting_importDialog_confirm_confirmText.
   ///
