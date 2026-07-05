@@ -2,6 +2,13 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.25.4+169-pre
+
+- Feature: import habits and records from Loop Habit Tracker (uhabit) CSV export (#612)
+- Feature: changelog first-open dialog and banner integration (#610)
+- Feature: sync Android animation scale with Flutter settings (#608)
+- Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate (#611)
+
 ## 1.25.3+168
 
 - Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate (#589)
