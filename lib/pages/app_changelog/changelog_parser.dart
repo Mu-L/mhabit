@@ -18,6 +18,42 @@ import 'package:markdown/markdown.dart' as md;
 import '../../assets/assets.dart';
 import '../../extensions/asset_bundle_extensions.dart';
 
+/// A single version section parsed from a changelog.
+///
+/// [version] is the `## <version>` heading text (e.g. `"1.25.3+168"`).
+/// [body] is the section body rendered back to markdown, or empty string
+/// when the section has no body content.
+final class ChangelogSection {
+  final String version;
+  final String body;
+
+  const ChangelogSection({required this.version, required this.body});
+}
+
+/// Parses [content] into a list of [ChangelogSection]s, one per `## ` h2
+/// heading.
+///
+/// Each section spans from its `## <version>` heading to the next `## `
+/// heading (or EOF). The section body is rendered back to markdown via the
+/// same `_renderNodesToMarkdown` pipeline used by [extractVersionSection].
+///
+/// [content] should be the raw CHANGELOG.md text. Callers that have already
+/// stripped the preamble via [stripChangelogPreamble] can pass the result
+/// directly.
+List<ChangelogSection> parseChangelogSections(String content) {
+  final nodes = md.Document().parse(content);
+  final sections = <ChangelogSection>[];
+
+  _forEachVersionSection(nodes, (version, bodyStart) {
+    final bodyNodes = _collectSectionNodes(nodes, bodyStart);
+    final body = _renderNodesToMarkdown(bodyNodes);
+    sections.add(ChangelogSection(version: version, body: body));
+    return true;
+  });
+
+  return sections;
+}
+
 /// Extracts the body markdown for [version] from raw [content].
 ///
 /// [content] is the full text of a changelog file.
@@ -28,10 +64,16 @@ import '../../extensions/asset_bundle_extensions.dart';
 /// `## <version>` heading, or `null` when no matching heading is found.
 String? extractVersionSection(String content, String version) {
   final nodes = md.Document().parse(content);
-  final headingIdx = _findVersionHeading(nodes, version);
-  if (headingIdx == null) return null;
-  final sectionNodes = _collectSectionNodes(nodes, headingIdx + 1);
-  return _renderNodesToMarkdown(sectionNodes);
+  String? section;
+
+  _forEachVersionSection(nodes, (heading, bodyStart) {
+    if (heading != version) return true;
+    final bodyNodes = _collectSectionNodes(nodes, bodyStart);
+    section = _renderNodesToMarkdown(bodyNodes);
+    return false;
+  });
+
+  return section;
 }
 
 /// Loads a changelog asset from [path] and returns the body markdown for
@@ -112,17 +154,6 @@ String stripChangelogPreamble(String content) {
   return match != null ? content.substring(match.start) : content;
 }
 
-int? _findVersionHeading(List<md.Node> nodes, String version) {
-  for (final (index, node) in nodes.indexed) {
-    if (node case md.Element(
-      tag: 'h2',
-    ) when node.textContent.trim() == version) {
-      return index;
-    }
-  }
-  return null;
-}
-
 List<md.Node> _collectSectionNodes(List<md.Node> nodes, int start) {
   final result = <md.Node>[];
   for (final node in nodes.skip(start)) {
@@ -130,6 +161,19 @@ List<md.Node> _collectSectionNodes(List<md.Node> nodes, int start) {
     result.add(node);
   }
   return result;
+}
+
+void _forEachVersionSection(
+  List<md.Node> nodes,
+  bool Function(String version, int bodyStart) visitor,
+) {
+  for (var i = 0; i < nodes.length; i++) {
+    final node = nodes[i];
+    if (node case md.Element(tag: 'h2')) {
+      final keepWalking = visitor(node.textContent.trim(), i + 1);
+      if (!keepWalking) return;
+    }
+  }
 }
 
 String _renderNodesToMarkdown(List<md.Node> nodes) {

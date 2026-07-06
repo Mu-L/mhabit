@@ -88,11 +88,16 @@ void main() {
         await tester.tap(find.text('View Full Changelog'));
         await tester.pumpAndSettle();
 
-        // Content should now be the full changelog
+        // Content should now show parsed section body (lazy list item)
         final block = find.byWidgetPredicate(
-          (w) => w is ThematicMarkdownBlock && w.data == _fullChangelog,
+          (w) => w is ThematicMarkdownBlock && w.data == '- old item',
         );
         expect(block, findsOneWidget);
+        // Original current-version content should be gone
+        final oldBlock = find.byWidgetPredicate(
+          (w) => w is ThematicMarkdownBlock && w.data == _currentVersionSection,
+        );
+        expect(oldBlock, findsNothing);
         expect(find.text('View Full Changelog'), findsNothing);
       },
     );
@@ -145,8 +150,8 @@ void main() {
       // Bottom sheet content should be visible
       expect(find.text('Changelog'), findsOneWidget);
       expect(find.text('v$_version'), findsOneWidget);
-      // AlertDialog close button should not be present
-      expect(find.text('Close'), findsNothing);
+      // Bottom sheet actions should include the close button
+      expect(find.text('Close'), findsOneWidget);
       // Fullscreen close icon should not be present
       expect(find.byIcon(Icons.close), findsNothing);
     });
