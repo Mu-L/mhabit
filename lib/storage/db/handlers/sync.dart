@@ -274,9 +274,16 @@ class SyncDBHelper extends DBHelperHandler {
     int syncCount = 0;
     if (habitSyncInfo.lastMark != data.sessionId) {
       if (habitSyncInfo.lastSesionUUID != data.sessionId) {
+        final habitDbMap = data
+            .toHabitDBCell()
+            .copyWith(id: null, uuid: null)
+            .toJson();
+        if (data.unknown == null || data.unknown!.isEmpty) {
+          habitDbMap[HabitDBCellKey.syncExtras] = null;
+        }
         count += await db.update(
           TableName.habits,
-          data.toHabitDBCell().copyWith(id: null, uuid: null).toJson(),
+          habitDbMap,
           where: "${HabitDBCellKey.uuid} = ?",
           whereArgs: [habitUUID],
         );
@@ -506,13 +513,16 @@ class SyncDBHelper extends DBHelperHandler {
             final dirtyTotal = result[dirtyTotalKey] as int?;
             final lastMarkId = result[lastMarkKey] as String?;
             final lastConfigId = result[configIdKey] as String?;
+            final cell = HabitDBCell.fromJson(result);
+            final unknown = decodeSyncExtras(cell.syncExtras);
             return WebDavSyncHabitData.fromHabitDBCell(
-              HabitDBCell.fromJson(result),
+              cell,
               dirty: dirty,
               dirtyTotal: dirtyTotal,
               sessionId: ((dirty ?? 0) > 0 || lastConfigId != configId)
                   ? sessionId
                   : lastMarkId,
+              unknown: unknown,
             );
           });
       if (!withRecords || habit == null) return habit;
@@ -543,13 +553,18 @@ class SyncDBHelper extends DBHelperHandler {
               );
             }),
           );
-      return habit.copyWith(
+      final unknown = habit.unknown;
+      final result = habit.copyWith(
         records: Map.fromEntries(
           records
               .map((e) => e.uuid != null ? MapEntry(e.uuid!, e) : null)
               .nonNulls,
         ),
       );
+      if (unknown != null && unknown.isNotEmpty) {
+        result.unknown = unknown;
+      }
+      return result;
     });
   }
 

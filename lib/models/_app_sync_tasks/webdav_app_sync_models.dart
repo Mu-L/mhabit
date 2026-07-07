@@ -41,6 +41,42 @@ import 'app_sync_task.dart';
 
 part 'webdav_app_sync_models.g.dart';
 
+String? encodeSyncExtras(Map<String, dynamic>? unknown) {
+  if (unknown == null || unknown.isEmpty) return null;
+  return jsonEncode(unknown);
+}
+
+Map<String, dynamic>? decodeSyncExtras(String? raw) {
+  if (raw == null) return null;
+  try {
+    final decoded = jsonDecode(raw);
+    return decoded is Map<String, dynamic> && decoded.isNotEmpty
+        ? decoded
+        : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+Map<String, dynamic>? captureSyncUnknown(JsonMap json, Set<String> knownKeys) {
+  final unknownKeys = json.keys.where((k) => !knownKeys.contains(k));
+  final unknown = <String, dynamic>{};
+  var count = 0;
+  for (final k in unknownKeys) {
+    unknown[k] = json[k];
+    count++;
+  }
+  return count > 0 ? unknown : null;
+}
+
+/// Existing keys win ([putIfAbsent] semantics).
+void mergeSyncUnknown(JsonMap target, Map<String, dynamic>? unknown) {
+  if (unknown == null) return;
+  for (final entry in unknown.entries) {
+    target.putIfAbsent(entry.key, () => entry.value);
+  }
+}
+
 /// Matches a habit JSON file name, e.g. 'habit-xxx-yyy-zzz.json'
 final reAppSyncHabitFileName = RegExp(r'^habit-([^/]+)\.json$');
 
@@ -291,7 +327,7 @@ class WebDavSyncRecordData implements JsonAdaptor {
   factory WebDavSyncRecordData.fromJson(JsonMap json) {
     assert(
       json.isNotEmpty
-          ? json[WebDavSyncHabitKey.convertType] == _convertType
+          ? json[WebDavSyncRecordKey.convertType] == _convertType
           : true,
     );
     return _$WebDavSyncRecordDataFromJson(json);
@@ -341,6 +377,8 @@ class WebDavSyncRecordData implements JsonAdaptor {
 /// (`lib/models/habit_export.dart`).
 ///
 /// {@macro habit_color_keys_relationship}
+///
+/// Single source of truth for JSON keys; [WebDavSyncHabitKeys] derives from this.
 class WebDavSyncHabitKey {
   static const String uuid = 'uuid';
   static const String createT = 'create_t';
@@ -366,6 +404,43 @@ class WebDavSyncHabitKey {
   static const String records = 'records';
   static const String convertType = '_convert_type';
   static const String schemaVersion = '_schema_version';
+}
+
+/// When adding a new sync-payload field, add a static const to
+/// [WebDavSyncHabitKey] first, then add an enum entry here.
+enum WebDavSyncHabitKeys {
+  uuid(WebDavSyncHabitKey.uuid),
+  createT(WebDavSyncHabitKey.createT),
+  modifyT(WebDavSyncHabitKey.modifyT),
+  type(WebDavSyncHabitKey.type),
+  status(WebDavSyncHabitKey.status),
+  name(WebDavSyncHabitKey.name),
+  desc(WebDavSyncHabitKey.desc),
+  color(WebDavSyncHabitKey.color),
+  customColor(WebDavSyncHabitKey.customColor),
+  customColorTinted(WebDavSyncHabitKey.customColorTinted),
+  dailyGoal(WebDavSyncHabitKey.dailyGoal),
+  dailyGoalUnit(WebDavSyncHabitKey.dailyGoalUnit),
+  dailyGoalExtra(WebDavSyncHabitKey.dailyGoalExtra),
+  freqType(WebDavSyncHabitKey.freqType),
+  freqCustom(WebDavSyncHabitKey.freqCustom),
+  reminder(WebDavSyncHabitKey.reminder),
+  reminderQuest(WebDavSyncHabitKey.reminderQuest),
+  startDate(WebDavSyncHabitKey.startDate),
+  targetDays(WebDavSyncHabitKey.targetDays),
+  sortPosition(WebDavSyncHabitKey.sortPosition),
+  sessionId(WebDavSyncHabitKey.sessionId),
+  records(WebDavSyncHabitKey.records),
+  convertType(WebDavSyncHabitKey.convertType),
+  schemaVersion(WebDavSyncHabitKey.schemaVersion);
+
+  const WebDavSyncHabitKeys(this.jsonKey);
+
+  final String jsonKey;
+
+  static final Set<String> allKnownKeys = Set.unmodifiable(
+    WebDavSyncHabitKeys.values.map((e) => e.jsonKey),
+  );
 }
 
 /// Sync-payload (wire) encoding of [HabitColor]: unlike [HabitColor.dbColorType],
@@ -462,6 +537,10 @@ class WebDavSyncHabitData implements JsonAdaptor {
   final int? dirty;
   final int? dirtyTotal;
 
+  /// Runtime bucket for JSON keys not recognized by the current schema.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  Map<String, dynamic>? unknown;
+
   static List<List> _recordsToJson(
     Map<HabitRecordUUID, WebDavSyncRecordData> records,
   ) => const NormalizingListConverter().toJson(
@@ -478,7 +557,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
         .nonNulls,
   );
 
-  const WebDavSyncHabitData({
+  WebDavSyncHabitData({
     this.schemaVersion = 1,
     this.uuid,
     this.createT,
@@ -514,6 +593,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
     int? dirtyTotal,
     String? sessionId,
     Map<HabitRecordUUID, WebDavSyncRecordData> records = const {},
+    Map<String, dynamic>? unknown,
   }) {
     final habitColor = HabitColor.fromRaw(
       colorType: cell.customColor != null
@@ -522,7 +602,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
       customColor: cell.customColor,
       customColorTinted: cell.customColorTinted,
     );
-    return WebDavSyncHabitData(
+    final data = WebDavSyncHabitData(
       schemaVersion: currentSchemaVersion,
       uuid: cell.uuid,
       createT: cell.createT,
@@ -550,6 +630,10 @@ class WebDavSyncHabitData implements JsonAdaptor {
       sessionId: sessionId,
       records: records,
     );
+    if (unknown != null && unknown.isNotEmpty) {
+      data.unknown = unknown;
+    }
+    return data;
   }
 
   factory WebDavSyncHabitData.fromJson(JsonMap json) {
@@ -558,17 +642,13 @@ class WebDavSyncHabitData implements JsonAdaptor {
           ? json[WebDavSyncHabitKey.convertType] == _convertType
           : true,
     );
-    return _$WebDavSyncHabitDataFromJson(json);
+    final data = _$WebDavSyncHabitDataFromJson(json);
+    data.unknown = captureSyncUnknown(json, WebDavSyncHabitKeys.allKnownKeys);
+    return data;
   }
 
   HabitDBCell toHabitDBCell() {
-    // Unlike `fromHabitDBCell`'s `cell.color!` (a locally-saved `HabitDBCell`
-    // always has a non-null `color`, by construction), `color` here comes
-    // from a deserialized sync payload `validate()` only requires `color` to
-    // be in 1-10 *when present* — it never requires `color`/`customColor` to
-    // jointly be non-null. A legacy or malformed payload with both missing
-    // would pass `validate()` but crash on a bare `color!`, so fall back to
-    // `cc1` (the same placeholder used for the custom-color path) instead.
+    // Sync payload may lack color; fall back to cc1 to avoid null crash.
     final habitColor = HabitColor.fromRaw(
       colorType: customColor != null
           ? HabitColorType.cc1
@@ -597,6 +677,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
       startDate: startDate,
       targetDays: targetDays,
       sortPosition: sortPostion,
+      syncExtras: encodeSyncExtras(unknown),
     );
   }
 
@@ -605,6 +686,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
     final json = _$WebDavSyncHabitDataToJson(this)
       ..[WebDavSyncHabitKey.convertType] = _convertType;
     if (schemaVersion <= 1) json.remove(WebDavSyncHabitKey.schemaVersion);
+    mergeSyncUnknown(json, unknown);
     return json;
   }
 
