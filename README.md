@@ -116,11 +116,11 @@ or modify the `.arb` files locally and submit a PR to the `weblate-translation` 
 
 ## Star History
 
-<a href="https://www.star-history.com/#FriesI23/mhabit&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=FriesI23%2Fmhabit&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=FriesI23/mhabit&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=FriesI23/mhabit&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=FriesI23/mhabit&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=FriesI23/mhabit&type=date&theme=dark&legend=top-left&sealed_token=4jL1_f1zxnXehevihvs6jW8uj2-dvAaHA6VwKg75SGHDsqcNznUNYFfAVXayOQ0fFnb4bQutEPvk9e5MVpJjDej3EsqMe7Z1puNpaJe9MCpbQ-VBrTFs5lRfPxdKZTV6JsV93Jqqul09qWb-aA3Gwe7d-EjFo5kpV75t5ydTHHOt8QQBdurQXPb6vmWf" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=FriesI23/mhabit&type=date&legend=top-left&sealed_token=4jL1_f1zxnXehevihvs6jW8uj2-dvAaHA6VwKg75SGHDsqcNznUNYFfAVXayOQ0fFnb4bQutEPvk9e5MVpJjDej3EsqMe7Z1puNpaJe9MCpbQ-VBrTFs5lRfPxdKZTV6JsV93Jqqul09qWb-aA3Gwe7d-EjFo5kpV75t5ydTHHOt8QQBdurQXPb6vmWf" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=FriesI23/mhabit&type=date&legend=top-left&sealed_token=4jL1_f1zxnXehevihvs6jW8uj2-dvAaHA6VwKg75SGHDsqcNznUNYFfAVXayOQ0fFnb4bQutEPvk9e5MVpJjDej3EsqMe7Z1puNpaJe9MCpbQ-VBrTFs5lRfPxdKZTV6JsV93Jqqul09qWb-aA3Gwe7d-EjFo5kpV75t5ydTHHOt8QQBdurQXPb6vmWf" />
  </picture>
 </a>
 
