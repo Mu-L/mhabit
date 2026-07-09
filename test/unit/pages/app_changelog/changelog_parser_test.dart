@@ -230,16 +230,168 @@ Second paragraph.
       expect(result, isNot(contains('- Pre-release content')));
     });
 
-    // 15: No match returns null
-    test('returns null when no heading matches', () {
+    // 15: Latest-section fallback when no heading matches
+    test('falls back to latest section when no heading matches', () {
       const content = '''
 ## 1.25.3+168
 
 - Only old version
 ''';
-      final result = extractVersionSectionWithFallback(content, '1.25.4+169');
-      expect(result, isNull);
+      // 1.25.4+169 doesn't exist → falls back to latest (1.25.3+168)
+      final result = extractVersionSectionWithFallback(
+        content,
+        '1.25.4+169',
+        useLatestFallback: true,
+      );
+      expect(result, isNotNull);
+      expect(result!, contains('- Only old version'));
     });
+
+    // 16: Beta heading with multi-hyphen suffix (e.g. -pre-release)
+    //     Regression: old \w+ regex failed on suffixes containing '-'
+    test('matches beta heading with multi-hyphen suffix', () {
+      const content = '''
+## 1.25.5+170-pre-release
+
+- Multi-hyphen suffix content
+''';
+      final result = extractVersionSectionWithFallback(content, '1.25.5+170');
+      expect(result, isNotNull);
+      expect(result!, contains('- Multi-hyphen suffix content'));
+    });
+
+    // 17: Beta heading with dotted suffix (e.g. -rc.1)
+    //     Regression: old \w+ regex failed on suffixes containing '.'
+    test('matches beta heading with dotted suffix', () {
+      const content = '''
+## 1.25.5+170-rc.1
+
+- Release candidate content
+''';
+      final result = extractVersionSectionWithFallback(content, '1.25.5+170');
+      expect(result, isNotNull);
+      expect(result!, contains('- Release candidate content'));
+    });
+
+    // 18: Chinese preamble with ASCII version headings
+    //     Simulates zh.md: h1 in Chinese + CHANGELOG link before first h2
+    test('matches version with Chinese preamble and CHANGELOG link', () {
+      const content = '''
+# 更新日志
+
+[中文](./docs/CHANGELOG/zh.md)
+
+## 1.25.5+170-pre
+
+- 功能：实现自适应内容面板
+
+## 1.25.4+169-pre
+
+- 旧版本内容
+''';
+      final result = extractVersionSectionWithFallback(content, '1.25.5+170');
+      expect(result, isNotNull);
+      expect(result!, contains('- 功能：实现自适应内容面板'));
+      expect(result, isNot(contains('- 旧版本内容')));
+    });
+
+    // 19: Semver-only fallback — wrong build number (e.g. F-Droid prefix)
+    //     1.25.5+2170 → no heading matches → falls through to semver "1.25.5"
+    test('matches by semver when build number has wrong prefix', () {
+      const content = '''
+## 1.25.5+170-pre
+
+- 功能：自适应内容面板
+''';
+      final result = extractVersionSectionWithFallback(content, '1.25.5+2170');
+      expect(result, isNotNull);
+      expect(result!, contains('- 功能：自适应内容面板'));
+    });
+
+    // 20: Semver fallback versus pre-release heading
+    test('matches by semver against pre-release heading', () {
+      const content = '''
+## 1.25.5+170-pre
+
+- Pre-release content
+''';
+      final result = extractVersionSectionWithFallback(content, '1.25.5+9999');
+      expect(result, isNotNull);
+      expect(result!, contains('- Pre-release content'));
+    });
+
+    // 21: Exact match is still preferred (even with semver fallback available)
+    test('exact match preferred over semver fallback', () {
+      const content = '''
+## 1.25.5+170
+
+- Exact match content
+
+## 1.25.5+170-pre
+
+- Pre-release content
+''';
+      final result = extractVersionSectionWithFallback(content, '1.25.5+170');
+      expect(result, isNotNull);
+      expect(result!, contains('- Exact match content'));
+      expect(result, isNot(contains('- Pre-release content')));
+    });
+
+    // 22: Flavor suffix + wrong build number → semver fallback
+    //     1.25.4-dev+2170 → base 1.25.4+2170 → semver 1.25.4 → match 1.25.4+169
+    test('strips flavor suffix before semver fallback', () {
+      const content = '''
+## 1.25.4+169
+
+- Content for 169
+''';
+      final result = extractVersionSectionWithFallback(
+        content,
+        '1.25.4-dev+2170',
+      );
+      expect(result, isNotNull);
+      expect(result!, contains('- Content for 169'));
+    });
+
+    // 23: Semver fallback returns null, but latest-section fallback kicks in
+    test('falls back to latest section when no heading matches at all', () {
+      const content = '''
+## 1.25.5+170
+
+- Some content
+
+## 1.25.4+169
+
+- Older content
+''';
+      final result = extractVersionSectionWithFallback(
+        content,
+        '2.0.0',
+        useLatestFallback: true,
+      );
+      expect(result, isNotNull);
+      expect(result!, contains('- Some content'));
+      expect(result, isNot(contains('- Older content')));
+    });
+
+    // 24: Latest-section fallback with content containing only one heading
+    test(
+      'returns only section when content has a single heading and no match',
+      () {
+        const content = '''
+## 1.25.5+170
+
+- Lone section
+''';
+        final result = extractVersionSectionWithFallback(
+          content,
+          '9.9.9+9',
+          useLatestFallback: true,
+        );
+        expect(result, isNotNull);
+        expect(result!, contains('- Lone section'));
+      },
+    );
   });
 
   group('parseChangelogSections', () {
