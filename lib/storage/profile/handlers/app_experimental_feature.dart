@@ -22,6 +22,11 @@ abstract mixin class AppExperimentalFeature<S, T>
   String get expKey;
 
   bool get enabled;
+
+  /// Whether this feature has graduated from experimental and is now
+  /// permanently enabled. Graduated features are excluded from the
+  /// experimental-feature warning banner.
+  bool get graduated => false;
 }
 
 abstract class AppExperimentalFeatureBool<T>

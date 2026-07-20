@@ -16,6 +16,9 @@ import '../converter.dart';
 import 'app_experimental_feature.dart';
 
 /// Enabled Switch: \<version\> > 1.19.0+109
+///
+/// Graduated from experimental — always on.
+@Deprecated('Scheduled for removal after v1.27.')
 class HabitSearchExperimentalFeature extends AppExperimentalFeatureBool<bool> {
   HabitSearchExperimentalFeature(super.pref)
     : super(codec: const SameTypeCodec());
@@ -24,8 +27,11 @@ class HabitSearchExperimentalFeature extends AppExperimentalFeatureBool<bool> {
   String get expKey => "search";
 
   @override
-  bool get() => super.get() ?? true;
+  bool get() => true;
 
   @override
-  bool get enabled => get();
+  bool get enabled => true;
+
+  @override
+  bool get graduated => true;
 }

@@ -46,7 +46,7 @@ final class _PageState extends State<_Page> {
   bool showWarningBanner = false;
 
   bool shouldShowWarningBanner() =>
-      vm?.allFeatures.any((e) => e.enabled) == true;
+      vm?.allFeatures.any((e) => !e.graduated && e.enabled) == true;
 
   @override
   void initState() {
@@ -88,12 +88,7 @@ final class _PageState extends State<_Page> {
               ? Text(l10n.experimentalFeatures_habitSearchTile_subtitleText)
               : null,
           value: value,
-          onChanged: (value) async {
-            await vm?.setHabitSearch(value);
-            if (vm?.habitSearch == true) {
-              setState(() => showWarningBanner = true);
-            }
-          },
+          onChanged: null,
         ),
       ),
     ];

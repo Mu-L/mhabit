@@ -47,10 +47,11 @@ class AppExperimentalFeatureViewModel extends ChangeNotifier
     }
   }
 
-  bool get habitSearch => _getBool<HabitSearchExperimentalFeature>();
+  @Deprecated('Scheduled for removal after v1.27. Use the feature directly.')
+  bool get habitSearch => true;
 
-  Future<void> setHabitSearch(bool vlaue, {bool listen = true}) =>
-      _setBool<HabitSearchExperimentalFeature>(vlaue, listen: listen);
+  @Deprecated('Scheduled for removal after v1.27.')
+  Future<void> setHabitSearch(bool vlaue, {bool listen = true}) async {}
 
   bool get habitGrouping => _getBool<HabitGroupingExperimentalFeature>();
 
