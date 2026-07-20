@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.26.0+173-pre
+
+- Feature: habit grouping with group management page, group-mode picker, collapsible groups, and cross-group drag-and-drop reorder, behind experimental feature flag (#617)
+- Update French, Hebrew, and Italian translations, thanks to contributors on Weblate (#616)
+
 ## 1.25.7+172
 
 - Feature: sync Android animation scale with Flutter settings (#608)

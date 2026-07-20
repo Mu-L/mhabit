@@ -1,0 +1,2 @@
+- Feature: habit grouping with group management page, group-mode picker, collapsible groups, and cross-group drag-and-drop reorder, behind experimental feature flag (#617)
+- Update French, Hebrew, and Italian translations, thanks to contributors on Weblate (#616)

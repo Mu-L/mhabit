@@ -1,7 +1,11 @@
-# Release: v1.25.7+172
+# Release: v1.26.0+173-pre
 
-## 🐛 Bug Fixes
+## ✨ Features
 
-- Replace regex-based beta heading matching with AST prefix matching for improved reliability (#615)
+- Habit grouping with group management page, group-mode picker, collapsible groups, and cross-group drag-and-drop reorder, behind experimental feature flag (#617)
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.25.3+168...v1.25.7+172)
+## 🌐 Translations
+
+- Update French, Hebrew, and Italian translations, thanks to contributors on Weblate (#616)
+
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/pre-v1.26.0+173...v1.25.7+172)
