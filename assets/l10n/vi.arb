@@ -268,6 +268,10 @@
     "habitDisplay_mainMenu_showCompletedTileText": "Hiển thị đã hoàn thành",
     "habitDisplay_mainMenu_showActivedTileText": "Hiển thị đã kích hoạt",
     "habitDisplay_mainMenu_settingTileText": "Cài đặt",
+    "habitDisplay_groupType_name": "Theo tên",
+    "habitDisplay_groupType_colorType": "Theo màu sắc",
+    "habitDisplay_groupTypeDialog_confirm": "xác nhận",
+    "habitDisplay_groupTypeDialog_cancel": "hủy",
     "habitDisplay_sort_reverseText": "Đảo ngược",
     "habitDisplay_sortDirection_asc": "(Tăng)",
     "habitDisplay_sortDirection_Desc": "(Giảm)",
@@ -1100,5 +1104,37 @@
     "changelog_view_full": "View Full Changelog",
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
+    },
+    "groupManage_deleteDialog_confirm": "Xóa",
+    "@groupManage_deleteDialog_confirm": {
+        "description": "Confirm button text for delete dialog"
+    },
+    "groupManage_deleteDialog_cancel": "Hủy",
+    "@groupManage_deleteDialog_cancel": {
+        "description": "Cancel button text for delete dialog"
+    },
+    "groupManage_name_label": "Theo tên",
+    "@groupManage_name_label": {
+        "description": "Label for the group name input field"
+    },
+    "groupManage_createDateTile_title": "Đã tạo",
+    "@groupManage_createDateTile_title": {
+        "description": "Label shown for the group creation date in the edit dialog"
+    },
+    "groupManage_modifyDateTile_title": "Đã sửa đổi",
+    "@groupManage_modifyDateTile_title": {
+        "description": "Label shown for the group modification date in the edit dialog"
+    },
+    "groupManage_icon_none": "vô giá trị",
+    "@groupManage_icon_none": {
+        "description": "Tooltip for the 'no icon' option in the group icon picker"
+    },
+    "groupManage_color_label": "Theo màu sắc",
+    "@groupManage_color_label": {
+        "description": "Section label for the color picker in group create/edit forms"
+    },
+    "groupManage_color_none": "vô giá trị",
+    "@groupManage_color_none": {
+        "description": "Tooltip for the 'no color' option in the group color picker"
     }
 }

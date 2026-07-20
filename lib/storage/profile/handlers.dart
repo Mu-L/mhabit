@@ -13,6 +13,7 @@
 // limitations under the License.
 
 export 'handlers/app_experimental_feature.dart';
+export 'handlers/app_flags.dart';
 export 'handlers/app_language.dart';
 export 'handlers/app_last_changelog_version.dart';
 export 'handlers/app_launch_entry.dart';
@@ -27,10 +28,13 @@ export 'handlers/compact_ui_switcher.dart';
 export 'handlers/custom_color_history.dart';
 export 'handlers/display_calendar_bar_occupy_prt.dart';
 export 'handlers/display_calendar_scroll_mode.dart';
+export 'handlers/display_group_mode.dart';
 export 'handlers/display_habits_filter.dart';
 export 'handlers/display_sort_mode.dart';
 export 'handlers/first_day.dart';
+export 'handlers/group_expand_timer_delay.dart';
 export 'handlers/habit_cell_gesture_mode.dart';
+export 'handlers/habit_grouping.dart';
 export 'handlers/habit_search.dart';
 export 'handlers/input_fill_cache.dart';
 export 'handlers/logging_level.dart';

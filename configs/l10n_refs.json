@@ -1,7 +1,22 @@
 {
-    "habitDisplay_searchFilter_habitType_groupTitle": "habitEdit_habitTypeDialog_title", "habitDisplay_searchFilter_completed": "habitDisplay_statsMenu_completedTileText",
+    "habitDisplay_searchFilter_habitType_groupTitle": "habitEdit_habitTypeDialog_title",
+    "habitDisplay_searchFilter_completed": "habitDisplay_statsMenu_completedTileText",
     "habitToday_appBar_title": "calendarPicker_clip_today",
     "habitDisplay_tab_today_label": "habitToday_appBar_title",
     "common_loadError_retryText": "habitDetail_notFoundRetryText",
-    "common_habitColorType_custom": "habitEdit_colorPicker_customSectionLabel"
+    "common_habitColorType_custom": "habitEdit_colorPicker_customSectionLabel",
+    "habitDisplay_groupType_name": "habitDisplay_sortType_name",
+    "habitDisplay_groupType_colorType": "habitDisplay_sortType_colorType",
+    "habitDisplay_groupTypeDialog_confirm": "habitDisplay_sortTypeDialog_confirm",
+    "habitDisplay_groupTypeDialog_cancel": "habitDisplay_sortTypeDialog_cancel",
+    "habitEdit_groupPicker_noGroup": "habitGroup_uncategorized",
+    "groupManage_deleteDialog_confirm": "habitDisplay_editPopMenu_delete",
+    "groupManage_deleteDialog_cancel": "confirmDialog_cancel_text",
+    "groupManage_name_label": "habitDisplay_groupType_name",
+    "groupManage_desc_label": "groupManage_descTooLong",
+    "groupManage_createDateTile_title": "habitDetail_createDateTile_title",
+    "groupManage_modifyDateTile_title": "habitDetail_modifyDateTile_title",
+    "groupManage_icon_none": "habitDetail_descDailyGoal_unitEmptyText",
+    "groupManage_color_none": "habitDetail_descDailyGoal_unitEmptyText",
+    "groupManage_color_label": "habitDisplay_groupType_colorType"
 }

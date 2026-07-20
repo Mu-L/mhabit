@@ -268,6 +268,10 @@
     "habitDisplay_mainMenu_showCompletedTileText": "Tamamlananları Göster",
     "habitDisplay_mainMenu_showActivedTileText": "Aktif Olanları Göster",
     "habitDisplay_mainMenu_settingTileText": "Ayarlar",
+    "habitDisplay_groupType_name": "Ada göre",
+    "habitDisplay_groupType_colorType": "Renge göre",
+    "habitDisplay_groupTypeDialog_confirm": "onayla",
+    "habitDisplay_groupTypeDialog_cancel": "iptal et",
     "habitDisplay_sort_reverseText": "Ters çevir",
     "habitDisplay_sortDirection_asc": "(Yükselen)",
     "habitDisplay_sortDirection_Desc": "(Alçalan)",
@@ -1101,5 +1105,37 @@
     "changelog_view_full": "View Full Changelog",
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
+    },
+    "groupManage_deleteDialog_confirm": "Sil",
+    "@groupManage_deleteDialog_confirm": {
+        "description": "Confirm button text for delete dialog"
+    },
+    "groupManage_deleteDialog_cancel": "İptal",
+    "@groupManage_deleteDialog_cancel": {
+        "description": "Cancel button text for delete dialog"
+    },
+    "groupManage_name_label": "Ada göre",
+    "@groupManage_name_label": {
+        "description": "Label for the group name input field"
+    },
+    "groupManage_createDateTile_title": "Oluşturuldu",
+    "@groupManage_createDateTile_title": {
+        "description": "Label shown for the group creation date in the edit dialog"
+    },
+    "groupManage_modifyDateTile_title": "Düzenlendi",
+    "@groupManage_modifyDateTile_title": {
+        "description": "Label shown for the group modification date in the edit dialog"
+    },
+    "groupManage_icon_none": "boş",
+    "@groupManage_icon_none": {
+        "description": "Tooltip for the 'no icon' option in the group icon picker"
+    },
+    "groupManage_color_label": "Renge göre",
+    "@groupManage_color_label": {
+        "description": "Section label for the color picker in group create/edit forms"
+    },
+    "groupManage_color_none": "boş",
+    "@groupManage_color_none": {
+        "description": "Tooltip for the 'no color' option in the group color picker"
     }
 }

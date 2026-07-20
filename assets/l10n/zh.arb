@@ -283,6 +283,95 @@
     "habitDisplay_mainMenu_showCompletedTileText": "已完成",
     "habitDisplay_mainMenu_showActivedTileText": "进行中",
     "habitDisplay_mainMenu_settingTileText": "设置",
+    "habitDisplay_groupType_name": "名称",
+    "habitDisplay_groupType_colorType": "颜色",
+    "habitDisplay_groupType_createDate": "创建日期",
+    "habitDisplay_groupTypeDialog_title": "分组排序",
+    "habitDisplay_groupTypeDialog_confirm": "确定",
+    "habitDisplay_groupTypeDialog_cancel": "取消",
+    "habitDisplay_groupTypeDialog_none": "平铺",
+    "habitDisplay_editPopMenu_groupModify": "修改分组",
+    "habitDisplay_groupModifyDialog_title": "修改分组",
+    "habitDisplay_groupModifyDialog_removeGroup": "移除分组",
+    "habitDisplay_groupModifyDialog_emptyGroups": "暂无分组",
+    "habitDisplay_groupModifyDialog_alreadyInGroup": "所选习惯已在该分组中",
+    "habitDisplay_groupModifyDialog_createGroup": "创建分组",
+    "habitDisplay_groupModifyDialog_saveAndApply": "保存并应用",
+    "habitDisplay_groupModifyConfirm_titleNew": "确认移动至分组",
+    "habitDisplay_groupModifyConfirm_titleMixed": "确认修改分组",
+    "habitDisplay_groupModifyConfirm_bodyNewGroup": "以下习惯将移动至「{groupName}」",
+    "@habitDisplay_groupModifyConfirm_bodyNewGroup": {
+        "placeholders": {
+            "groupName": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "移除以下习惯的分组",
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count} 个习惯将由「{fromGroup}」修改至「{toGroup}」",
+    "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits changing group"
+            },
+            "fromGroup": {
+                "type": "String",
+                "description": "Old group name"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "New group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyAddStat": "{count} 个习惯将由未分类新增至「{toGroup}」",
+    "@habitDisplay_groupModifyConfirm_bodyAddStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being added"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyRemoveStat": "{count} 个习惯将移除分组",
+    "@habitDisplay_groupModifyConfirm_bodyRemoveStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being removed"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_nameSeparator": "、",
+    "habitDisplay_groupModify_snackbarText": "已移动 {count} 个习惯至「{groupName}」",
+    "@habitDisplay_groupModify_snackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of modified habits"
+            },
+            "groupName": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModify_snackbarTextRemoved": "已移除 {count} 个习惯的分组",
+    "@habitDisplay_groupModify_snackbarTextRemoved": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits"
+            }
+        }
+    },
+    "habitDisplay_groupModify_undoFailed": "分组已被其他操作修改，无法撤销",
     "habitDisplay_sort_reverseText": "反向排序",
     "habitDisplay_sortDirection_asc": "(正序)",
     "habitDisplay_sortDirection_Desc": "(反序)",
@@ -491,6 +580,14 @@
     "appSetting_changeRecordStatusOpTile_subtitleText": "修改主页面上每日记录的状态的点击行为。",
     "appSetting_openRecordStatusDialogOpTile_titleText": "打开详细记录",
     "appSetting_openRecordStatusDialogOpTile_subtitleText": "修改主页面上打开每日记录详情弹窗的点击行为。",
+    "appSetting_expandTimerDelayTile_titleText": "分组展开延迟",
+    "@appSetting_expandTimerDelayTile_titleText": {
+        "description": "Title for the group expand timer delay setting tile"
+    },
+    "appSetting_expandTimerDelayTile_subtitleText": "拖拽习惯到折叠的分组标题上时，自动展开分组的延迟时间。",
+    "appSetting_expandTimerDelay_default": "默认",
+    "appSetting_expandTimerDelay_fast": "快",
+    "appSetting_expandTimerDelay_slow": "慢",
     "appSetting_appThemeColorTile_titleText": "主题颜色",
     "appSetting_appThemeColorChosenDiloag_titleText": "选择主题颜色",
     "appSetting_appThemeColorChosenDialog_subTitleText_android": "使用壁纸主色（安卓 12 及以上）",
@@ -552,6 +649,26 @@
         }
     },
     "appSetting_importDialog_confirmSubtitle": "注意：导入不会删除现有的习惯。",
+    "appSetting_importDialog_option_includeHabits": "包含习惯",
+    "appSetting_importDialog_option_includeGroups": "包含分组",
+    "appSetting_importDialog_tile_includeHabits": "包含 {count} 个习惯",
+    "@appSetting_importDialog_tile_includeHabits": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "appSetting_importDialog_tile_includeGroups": "包含 {count} 个分组",
+    "@appSetting_importDialog_tile_includeGroups": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
     "appSetting_importConfirmDialog_sourceLabel": "来源: {provider}",
     "@appSetting_importConfirmDialog_sourceLabel": {
         "placeholders": {
@@ -582,6 +699,15 @@
     },
     "appSetting_importDialog_completeTitle": "完成导入 {count} 个习惯",
     "@appSetting_importDialog_completeTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_completeTitleGroups": "完成导入 {count} 个分组",
+    "@appSetting_importDialog_completeTitleGroups": {
         "placeholders": {
             "count": {
                 "type": "int",
@@ -1032,6 +1158,7 @@
     "common_errorPage_title": "啊呀，崩溃了！",
     "common_errorPage_copied": "已复制崩溃信息",
     "common_enable_text": "启用",
+    "common_dontShowAgain": "不再提示",
     "calendarPicker_clip_today": "今天",
     "calendarPicker_clip_tomorrow": "明天",
     "calendarPicker_clip_after7Days": "下{date}",
@@ -1054,6 +1181,25 @@
         }
     },
     "exportConfirmDialog_option_includeRecords": "包含习惯记录",
+    "exportConfirmDialog_option_includeGroups": "包含分组",
+    "exportConfirmDialog_tile_includeRecords": "包含 {count} 条记录",
+    "@exportConfirmDialog_tile_includeRecords": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "exportConfirmDialog_tile_includeGroups": "导出 {count} 个分组",
+    "@exportConfirmDialog_tile_includeGroups": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
     "exportConfirmDialog_cancel_buttonText": "取消",
     "exportConfirmDialog_confirm_buttonText": "导出",
     "debug_logLevelTile_title": "日志级别",
@@ -1134,5 +1280,160 @@
     "changelog_view_full": "查看完整更新日志",
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
+    },
+    "habitGroup_uncategorized": "无分组",
+    "@habitGroup_uncategorized": {
+        "description": "Virtual group name for habits without a group"
+    },
+    "habitDetail_groupTile_title": "分组",
+    "@habitDetail_groupTile_title": {
+        "description": "Title for the group info tile on the habit detail page"
+    },
+    "habitEdit_groupTile_title": "分组",
+    "@habitEdit_groupTile_title": {
+        "description": "Title for the group selector tile on the habit edit page"
+    },
+    "habitEdit_groupPicker_hintText": "搜索或创建分组",
+    "@habitEdit_groupPicker_hintText": {
+        "description": "Placeholder text for the group picker search field"
+    },
+    "habitEdit_groupPicker_noGroup": "无分组",
+    "@habitEdit_groupPicker_noGroup": {
+        "description": "Option text for selecting no group"
+    },
+    "habitEdit_groupPicker_createGroup": "创建「{name}」",
+    "@habitEdit_groupPicker_createGroup": {
+        "description": "Button text to create a new group with the given name",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "Work"
+            }
+        }
+    },
+    "habitEdit_groupPicker_loading": "分组加载中…",
+    "@habitEdit_groupPicker_loading": {
+        "description": "Placeholder text shown in the group picker while groups are loading"
+    },
+    "groupManage_appbar_title": "管理分组",
+    "@groupManage_appbar_title": {
+        "description": "Title for the Group management page AppBar"
+    },
+    "groupManage_selectionAppbar_title": "已选择 {count} 项",
+    "@groupManage_selectionAppbar_title": {
+        "description": "AppBar title in selection mode, {count} = number of selected groups",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_emptyState_text": "暂无分组\n点击 + 创建你的第一个分组",
+    "@groupManage_emptyState_text": {
+        "description": "Empty state text shown when no groups exist"
+    },
+    "groupManage_deleteDialog_title": "删除分组",
+    "@groupManage_deleteDialog_title": {
+        "description": "Title for the delete confirmation dialog"
+    },
+    "groupManage_deleteDialog_content": "{count, plural, =1 {该分组内的习惯将变为未分类。} other {{count} 个分组内的习惯将变为未分类。}}",
+    "@groupManage_deleteDialog_content": {
+        "description": "Content body for the delete confirmation dialog",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of groups being deleted"
+            }
+        }
+    },
+    "groupManage_deleteDialog_confirm": "删除",
+    "@groupManage_deleteDialog_confirm": {
+        "description": "Confirm button text for delete dialog"
+    },
+    "groupManage_deleteDialog_cancel": "取消",
+    "@groupManage_deleteDialog_cancel": {
+        "description": "Cancel button text for delete dialog"
+    },
+    "groupManage_deleted_snackbarText": "分组已删除",
+    "@groupManage_deleted_snackbarText": {
+        "description": "SnackBar text after successful group deletion"
+    },
+    "groupManage_undo_snackbarAction": "撤销",
+    "@groupManage_undo_snackbarAction": {
+        "description": "SnackBar undo button text"
+    },
+    "groupManage_editDialog_title": "编辑分组",
+    "@groupManage_editDialog_title": {
+        "description": "Title for the group edit dialog"
+    },
+    "groupManage_createDialog_title": "创建分组",
+    "@groupManage_createDialog_title": {
+        "description": "Title for the group creation dialog"
+    },
+    "groupManage_nameRequired": "名称为必填",
+    "@groupManage_nameRequired": {
+        "description": "Validation error when group name is empty"
+    },
+    "groupManage_nameTooLong": "名称不能超过 {max} 个字符",
+    "@groupManage_nameTooLong": {
+        "description": "Validation error when group name exceeds max length",
+        "placeholders": {
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_name_label": "名称",
+    "@groupManage_name_label": {
+        "description": "Label for the group name input field"
+    },
+    "groupManage_desc_label": "描述",
+    "@groupManage_desc_label": {
+        "description": "Label for the group description input field"
+    },
+    "groupManage_descTooLong": "描述不应超过 {max} 个字符",
+    "@groupManage_descTooLong": {
+        "description": "Validation warning when group description exceeds recommended length",
+        "placeholders": {
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_sortTile_text": "排序分组",
+    "@groupManage_sortTile_text": {
+        "description": "Label for the sort selector entry"
+    },
+    "groupManage_sectionTitle_text": "分组",
+    "@groupManage_sectionTitle_text": {
+        "description": "Section header text for Groups in Settings page"
+    },
+    "groupManage_createDateTile_title": "创建日期",
+    "@groupManage_createDateTile_title": {
+        "description": "Label shown for the group creation date in the edit dialog"
+    },
+    "groupManage_modifyDateTile_title": "修改日期",
+    "@groupManage_modifyDateTile_title": {
+        "description": "Label shown for the group modification date in the edit dialog"
+    },
+    "groupManage_icon_label": "图标",
+    "@groupManage_icon_label": {
+        "description": "Section label for the icon picker in group create/edit forms"
+    },
+    "groupManage_icon_none": "无",
+    "@groupManage_icon_none": {
+        "description": "Tooltip for the 'no icon' option in the group icon picker"
+    },
+    "groupManage_color_label": "颜色",
+    "@groupManage_color_label": {
+        "description": "Section label for the color picker in group create/edit forms"
+    },
+    "groupManage_color_none": "无",
+    "@groupManage_color_none": {
+        "description": "Tooltip for the 'no color' option in the group color picker"
+    },
+    "appSetting_manageGroups_subtitleText": "创建、编辑和删除习惯分组",
+    "@appSetting_manageGroups_subtitleText": {
+        "description": "Subtitle for the Manage Groups tile in Settings"
     }
 }

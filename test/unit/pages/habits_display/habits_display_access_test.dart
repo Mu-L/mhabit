@@ -16,8 +16,8 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
-import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_event.dart';
+import 'package:mhabit/models/group.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_display.dart';
@@ -28,11 +28,14 @@ import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_today.dart';
 import 'package:mhabit/providers/workflow/app_event.dart';
-import 'package:mhabit/providers/workflow/app_sync.dart';
+import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
 
-final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
+import '../../../support/stub/app_sync.dart';
+import '../../../support/stub/habits_display_access.dart';
+
+final class _FakeHabitsDisplayAccess extends StubHabitsDisplayAccess {
   final HabitSummaryData seedData;
   final List<HabitSummaryData> extraSeedData;
   final String recordReason = 'record-reason';
@@ -150,53 +153,24 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
     reminderRepairParamsList.add(params);
     return Future.value();
   }
-
-  @override
-  Future<void> refreshHabitReminders({HabitReminderRefreshParams? params}) =>
-      Future.value();
 }
 
-final class _FakeAppSyncWorkflowAccess implements AppSyncWorkflowAccess {
+final class _FakeAppSyncWorkflowAccess extends StubAppSyncWorkflowAccess {
   final _controller = StreamController<String>.broadcast(sync: true);
 
   @override
-  bool get canStartSync => true;
-
-  @override
-  Stream<AppSyncNeedConfirmEvent> get confirmEvents => const Stream.empty();
-
-  @override
-  Future? get syncProcessing => null;
-
-  @override
-  AppSyncStatusSnapshot? get syncStatus => null;
-
-  @override
   Stream<String> get startSyncEvents => _controller.stream;
-
-  @override
-  void onL10nUpdate(L10n? l10n) {}
-
-  @override
-  void addListener(void Function() listener) {}
-
-  @override
-  void cancelSync() {}
-
-  @override
-  void delayedStartTaskOnce({Duration delay = kAppSyncOnceDelay}) {}
 
   void emit(String id) {
     _controller.add(id);
   }
 
   Future<void> close() => _controller.close();
+}
 
+final class _StubGroupManager extends GroupManager {
   @override
-  void removeListener(void Function() listener) {}
-
-  @override
-  Future<void> startSync({Duration? initWait}) async {}
+  Future<List<GroupDBCell>> loadAllActiveGroups() async => [];
 }
 
 HabitSummaryData _buildHabitSummaryData({
@@ -238,7 +212,9 @@ void main() {
     test('HabitSummaryViewModel loads and reads through access', () async {
       final seedData = _buildHabitSummaryData();
       final access = _FakeHabitsDisplayAccess(seedData: seedData);
-      final vm = HabitSummaryViewModel()..attachAccess(access);
+      final vm = HabitSummaryViewModel()
+        ..attachAccess(access)
+        ..attachGroupManager(_StubGroupManager());
 
       await vm.loadData(listen: false);
 
@@ -316,7 +292,9 @@ void main() {
     test('HabitSummaryViewModel writes through access', () async {
       final seedData = _buildHabitSummaryData();
       final access = _FakeHabitsDisplayAccess(seedData: seedData);
-      final vm = HabitSummaryViewModel()..attachAccess(access);
+      final vm = HabitSummaryViewModel()
+        ..attachAccess(access)
+        ..attachGroupManager(_StubGroupManager());
 
       await vm.loadData(listen: false);
 
@@ -356,7 +334,9 @@ void main() {
             ),
           ],
         );
-        final vm = HabitSummaryViewModel()..attachAccess(access);
+        final vm = HabitSummaryViewModel()
+          ..attachAccess(access)
+          ..attachGroupManager(_StubGroupManager());
 
         await vm.loadData(listen: false);
 
@@ -397,8 +377,9 @@ void main() {
         final access = _FakeHabitsDisplayAccess(seedData: seedData);
         final appSync = _FakeAppSyncWorkflowAccess();
         final vm = HabitSummaryViewModel()
+          ..attachWorkflow(appSync)
           ..attachAccess(access)
-          ..attachWorkflow(appSync);
+          ..attachGroupManager(_StubGroupManager());
 
         await vm.loadData(listen: false);
         appSync.emit('sync-1');
@@ -416,8 +397,9 @@ void main() {
       final access = _FakeHabitsDisplayAccess(seedData: seedData);
       final appEvent = AppEventBus();
       final vm = HabitSummaryViewModel()
+        ..updateAppEvent(appEvent)
         ..attachAccess(access)
-        ..updateAppEvent(appEvent);
+        ..attachGroupManager(_StubGroupManager());
 
       await vm.loadData(listen: false);
       appEvent.push(const ReloadDataEvent(clearSnackBar: true));

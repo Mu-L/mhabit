@@ -28,6 +28,7 @@ import '../../common/types.dart';
 import '../../common/utils.dart';
 import '../../logging/helper.dart';
 import '../../logging/logger_stack.dart';
+import '../../models/group.dart';
 import '../../utils/app_path_provider.dart';
 import '../utils.dart';
 import 'handlers/habit.dart';
@@ -74,6 +75,7 @@ class _DBHelper implements DBHelper {
   Future<void> _onCreate(Database db, int version) async {
     await db.execute(await getSqlFromFile(Assets.sql.mhHabits));
     await db.execute(await getSqlFromFile(Assets.sql.mhRecords));
+    await db.execute(await getSqlFromFile(Assets.sql.mhGroups));
     await db.execute(await getSqlFromFile(Assets.sql.mhSync));
     final indexesBatch = db.batch();
     await Future.wait([
@@ -87,6 +89,7 @@ class _DBHelper implements DBHelper {
         })
         .whenComplete(indexesBatch.commit);
     await db.execute(CustomSql.autoUpdateHabitsModifyTimeTrigger);
+    await db.execute(CustomSql.autoUpdateGroupsModifyTimeTrigger);
     await db.execute(CustomSql.autoUpdateRecordsModifyTimeTrigger);
     await db.execute(CustomSql.autoAddSortPostionWhenAddNewHabit);
     await db.execute(CustomSql.autoUpdateSyncModifyTimeTrigger);
@@ -163,6 +166,59 @@ class _DBHelper implements DBHelper {
         await db.execute(
           "ALTER TABLE ${TableName.habits} "
           "ADD COLUMN ${HabitDBCellKey.syncExtras} TEXT",
+        );
+      }
+    }
+    if (oldVersion < 7) {
+      // 1. ALTER mh_habits ADD group_id
+      final habitsTableInfo = await db.rawQuery(
+        'PRAGMA table_info(${TableName.habits})',
+      );
+      if (!habitsTableInfo.any(
+        (column) => column['name'] == HabitDBCellKey.groupId,
+      )) {
+        await db.execute(
+          "ALTER TABLE ${TableName.habits} "
+          "ADD COLUMN ${HabitDBCellKey.groupId} TEXT",
+        );
+      }
+
+      // 2. Create mh_groups table
+      await db.execute(await getSqlFromFile(Assets.sql.mhGroups));
+      await db.execute(CustomSql.autoUpdateGroupsModifyTimeTrigger);
+
+      // 2a. ALTER mh_groups ADD tint columns (for DBs created before
+      // custom_color / custom_color_tinted were added to mh_groups.sql)
+      final groupsTableInfo = await db.rawQuery(
+        'PRAGMA table_info(${TableName.groups})',
+      );
+      if (!groupsTableInfo.any(
+        (column) => column['name'] == GroupDBCellKey.customColor,
+      )) {
+        await db.execute(
+          "ALTER TABLE ${TableName.groups} "
+          "ADD COLUMN ${GroupDBCellKey.customColor} INTEGER",
+        );
+      }
+      if (!groupsTableInfo.any(
+        (column) => column['name'] == GroupDBCellKey.customColorTinted,
+      )) {
+        await db.execute(
+          "ALTER TABLE ${TableName.groups} "
+          "ADD COLUMN ${GroupDBCellKey.customColorTinted} INTEGER",
+        );
+      }
+
+      // 3. ALTER mh_sync ADD group_uuid
+      final syncTableInfo = await db.rawQuery(
+        'PRAGMA table_info(${TableName.sync})',
+      );
+      if (!syncTableInfo.any(
+        (column) => column['name'] == SyncDbCellKey.groupUUID,
+      )) {
+        await db.execute(
+          "ALTER TABLE ${TableName.sync} "
+          "ADD COLUMN ${SyncDbCellKey.groupUUID} TEXT",
         );
       }
     }

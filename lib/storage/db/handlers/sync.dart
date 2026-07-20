@@ -20,11 +20,13 @@ import 'package:sqflite/sqflite.dart';
 import '../../../common/types.dart';
 import '../../../logging/helper.dart';
 import '../../../models/app_sync_tasks.dart';
+import '../../../models/group.dart';
 import '../db_cell.dart';
 import '../db_helper.dart';
 import '../table.dart';
 import 'habit.dart';
 import 'record.dart';
+import 'sync_group.dart';
 
 part 'sync.g.dart';
 
@@ -34,6 +36,7 @@ class SyncDbCellKey {
   static const modifyT = 'modify_t';
   static const habitUUID = 'habit_uuid';
   static const recordUUID = 'record_uuid';
+  static const groupUUID = 'group_uuid';
   static const dirty = 'dirty';
   static const dirtyTotal = 'dirty_total';
   static const lastConfigUUID = 'last_config_uuid';
@@ -57,6 +60,8 @@ class SyncDBCell with DBCell {
   final HabitUUID? habitUUID;
   @JsonKey(name: SyncDbCellKey.recordUUID)
   final HabitUUID? recordUUID;
+  @JsonKey(name: SyncDbCellKey.groupUUID)
+  final HabitUUID? groupUUID;
   @JsonKey(name: SyncDbCellKey.dirty)
   final int? dirty;
   @JsonKey(name: SyncDbCellKey.dirtyTotal)
@@ -76,6 +81,7 @@ class SyncDBCell with DBCell {
     this.modifyT,
     this.habitUUID,
     this.recordUUID,
+    this.groupUUID,
     this.dirty,
     this.dirtyTotal,
     this.lastConfigUUID,
@@ -94,6 +100,11 @@ class SyncDBCell with DBCell {
     return SyncDBCell(habitUUID: cell.uuid, dirty: 1, dirtyTotal: 1);
   }
 
+  factory SyncDBCell.genFromGroup(GroupDBCell cell) {
+    assert(cell.uuid != null);
+    return SyncDBCell(groupUUID: cell.uuid, dirty: 1, dirtyTotal: 1);
+  }
+
   factory SyncDBCell.fromJson(JsonMap cell) => _$SyncDBCellFromJson(cell);
 
   @override
@@ -101,7 +112,7 @@ class SyncDBCell with DBCell {
 }
 
 class SyncDBHelper extends DBHelperHandler {
-  const SyncDBHelper(super.helper);
+  SyncDBHelper(super.helper);
 
   @override
   String get table => TableName.sync;
@@ -632,4 +643,8 @@ class SyncDBHelper extends DBHelperHandler {
       );
     });
   }
+
+  SyncGroupDBHelper? _group;
+
+  SyncGroupDBHelper get group => _group ??= SyncGroupDBHelper(helper);
 }

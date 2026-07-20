@@ -219,6 +219,10 @@
     "habitDisplay_mainMenu_showCompletedTileText": "Mostrar completados",
     "habitDisplay_mainMenu_showActivedTileText": "Mostrar activos",
     "habitDisplay_mainMenu_settingTileText": "Definições",
+    "habitDisplay_groupType_name": "Por nome",
+    "habitDisplay_groupType_colorType": "Por cor",
+    "habitDisplay_groupTypeDialog_confirm": "confirmar",
+    "habitDisplay_groupTypeDialog_cancel": "cancelar",
     "habitDisplay_sort_reverseText": "Inverter",
     "habitDisplay_sortDirection_asc": "(Asc)",
     "habitDisplay_sortDirection_Desc": "(Desc)",
@@ -617,5 +621,25 @@
     "changelog_view_full": "View Full Changelog",
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
+    },
+    "groupManage_deleteDialog_confirm": "Apagar",
+    "@groupManage_deleteDialog_confirm": {
+        "description": "Confirm button text for delete dialog"
+    },
+    "groupManage_name_label": "Por nome",
+    "@groupManage_name_label": {
+        "description": "Label for the group name input field"
+    },
+    "groupManage_createDateTile_title": "Criado",
+    "@groupManage_createDateTile_title": {
+        "description": "Label shown for the group creation date in the edit dialog"
+    },
+    "groupManage_modifyDateTile_title": "Alterado",
+    "@groupManage_modifyDateTile_title": {
+        "description": "Label shown for the group modification date in the edit dialog"
+    },
+    "groupManage_color_label": "Por cor",
+    "@groupManage_color_label": {
+        "description": "Section label for the color picker in group create/edit forms"
     }
 }

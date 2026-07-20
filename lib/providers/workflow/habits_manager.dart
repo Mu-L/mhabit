@@ -23,6 +23,7 @@ import '../../models/habit_date.dart';
 import '../../models/habit_detail.dart';
 import '../../models/habit_export.dart';
 import '../../models/habit_form.dart';
+import '../../models/habit_group.dart';
 import '../../models/habit_import.dart';
 import '../../models/habit_repo_actions.dart';
 import '../../models/habit_summary.dart';
@@ -283,6 +284,16 @@ abstract interface class HabitsDisplayAccess {
     required int decimalPlaces,
   });
 
+  /// Batch-updates [HabitDBCellKey.groupId] for the given habits.
+  ///
+  /// [uuids] and [groupIds] must have the same length.
+  /// Pass `null` entries in [groupIds] to clear the column
+  /// (uncategorized). Each row also bumps the sync dirty flag.
+  Future<void> updateHabitGroupIds(
+    List<HabitUUID> uuids,
+    List<String?> groupIds,
+  );
+
   Future<void> repairHabitReminders({
     required HabitReminderRepairParams params,
   });
@@ -326,6 +337,7 @@ abstract interface class HabitImportAccess {
   List<Future<void>> importHabitsData(
     Iterable<Object?> jsonData, {
     bool withRecords = true,
+    Map<String, GroupUUID>? groupUuidMapping,
   });
 
   int getImportHabitsCount(Iterable<Object?> jsonData);
@@ -568,6 +580,7 @@ class HabitsManager
       cell,
       includeNullKeys: [
         ...HabitDBCellKey.nullableColorKeys,
+        HabitDBCellKey.groupId,
         if (withReminder) ...[
           HabitDBCellKey.remindCustom,
           HabitDBCellKey.remindQuestion,
@@ -639,8 +652,18 @@ class HabitsManager
     final recordLoadTask = recordDBHelper.loadRecords(uuid);
     final cell = await dataLoadTask;
     if (cell == null) return null;
+
+    // Resolve group display info from the habit's groupId FK.
+    final groupTask = cell.groupId != null
+        ? groupDBHelper.loadGroupByUUID(cell.groupId!)
+        : null;
+
     final records = await recordLoadTask;
-    final data = HabitDetailData.fromDBQueryCell(cell);
+    final group = await groupTask;
+    final data = HabitDetailData.fromDBQueryCell(
+      cell,
+      groupData: group != null ? HabitGroupData.fromDBQueryCell(group) : null,
+    );
     data.data.initRecords(records.map(HabitSummaryRecord.fromDBQueryCell));
     return data;
   }
@@ -686,6 +709,12 @@ class HabitsManager
 
     return changedUUIDs;
   }
+
+  @override
+  Future<void> updateHabitGroupIds(
+    List<HabitUUID> uuids,
+    List<String?> groupIds,
+  ) => habitDBHelper.updateSelectedHabitsGroupId(uuids, groupIds);
 
   Future<void> _updateHabitReminder(HabitSummaryData data) {
     if (!_resolveReminderStatus().isReady) return Future.value();
@@ -788,8 +817,15 @@ class HabitsManager
   HabitExporter getExporter({List<HabitUUID>? uuidList}) =>
       HabitExporter(habitDBHelper, recordDBHelper, uuidList: uuidList);
 
-  HabitImport getImporter(Iterable<Object?> jsonData) =>
-      HabitImport(habitDBHelper, recordDBHelper, data: jsonData);
+  HabitImport getHabitImporter(
+    Iterable<Object?> jsonData, {
+    Map<String, GroupUUID>? groupUuidMapping,
+  }) => HabitImport(
+    habitDBHelper,
+    recordDBHelper,
+    data: jsonData,
+    groupUuidMapping: groupUuidMapping,
+  );
 
   @override
   Future<Iterable<HabitExportData>> loadHabitExportData({
@@ -801,10 +837,14 @@ class HabitsManager
   List<Future<void>> importHabitsData(
     Iterable<Object?> jsonData, {
     bool withRecords = true,
-  }) => getImporter(jsonData).importData(withRecords: withRecords);
+    Map<String, GroupUUID>? groupUuidMapping,
+  }) => getHabitImporter(
+    jsonData,
+    groupUuidMapping: groupUuidMapping,
+  ).importData(withRecords: withRecords);
 
   @override
   int getImportHabitsCount(Iterable<Object?> jsonData) =>
-      getImporter(jsonData).habitsCount;
+      getHabitImporter(jsonData).habitsCount;
   //#endregion
 }

@@ -405,6 +405,135 @@ class L10nFa extends L10n {
   String get habitDisplay_mainMenu_settingTileText => 'تنظیمات';
 
   @override
+  String get habitDisplay_groupType_name => 'بر اساس نام';
+
+  @override
+  String get habitDisplay_groupType_colorType => 'بر اساس رنگ';
+
+  @override
+  String get habitDisplay_groupType_createDate => 'By Creation Date';
+
+  @override
+  String get habitDisplay_groupTypeDialog_title => 'Group Sort';
+
+  @override
+  String get habitDisplay_groupTypeDialog_confirm => 'تایید';
+
+  @override
+  String get habitDisplay_groupTypeDialog_cancel => 'لغو';
+
+  @override
+  String get habitDisplay_groupTypeDialog_none => 'Flat';
+
+  @override
+  String get habitDisplay_editPopMenu_groupModify => 'Modify Group';
+
+  @override
+  String get habitDisplay_groupModifyDialog_title => 'Modify Group';
+
+  @override
+  String get habitDisplay_groupModifyDialog_removeGroup => 'Remove Group';
+
+  @override
+  String get habitDisplay_groupModifyDialog_emptyGroups =>
+      'No groups available';
+
+  @override
+  String get habitDisplay_groupModifyDialog_alreadyInGroup =>
+      'Selected habits are already in this group';
+
+  @override
+  String get habitDisplay_groupModifyDialog_createGroup => 'Create Group';
+
+  @override
+  String get habitDisplay_groupModifyDialog_saveAndApply => 'Save & Apply';
+
+  @override
+  String get habitDisplay_groupModifyConfirm_titleNew => 'Move to Group';
+
+  @override
+  String get habitDisplay_groupModifyConfirm_titleMixed =>
+      'Confirm Group Change';
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyNewGroup(String groupName) {
+    return '$groupName habits will be moved to this group';
+  }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_bodyRemoveGroup =>
+      'Habits will have their group removed';
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyChangeStat(
+    int count,
+    String fromGroup,
+    String toGroup,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count habits will change from \"$fromGroup\" to \"$toGroup\"',
+      one: '$count habit will change from \"$fromGroup\" to \"$toGroup\"',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyAddStat(
+    int count,
+    String toGroup,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count uncategorized habits will be added to \"$toGroup\"',
+      one: '$count uncategorized habit will be added to \"$toGroup\"',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyRemoveStat(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count habits will have their groups removed',
+      one: '$count habit will have its group removed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_nameSeparator => ', ';
+
+  @override
+  String habitDisplay_groupModify_snackbarText(int count, String groupName) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Moved $count habits to \"$groupName\"',
+      one: 'Moved habit to \"$groupName\"',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String habitDisplay_groupModify_snackbarTextRemoved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Removed groups from $count habits',
+      one: 'Removed group from habit',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get habitDisplay_groupModify_undoFailed =>
+      'Group has been modified elsewhere, cannot undo';
+
+  @override
   String get habitDisplay_sort_reverseText => 'معکوس';
 
   @override
@@ -767,6 +896,22 @@ class L10nFa extends L10n {
       'اصلاح رفتار کلیک برای باز کردن پاپ آپ دقیق برای سوابق روزانه در صفحه اصلی.';
 
   @override
+  String get appSetting_expandTimerDelayTile_titleText => 'Group expand delay';
+
+  @override
+  String get appSetting_expandTimerDelayTile_subtitleText =>
+      'Set how long to hover over a collapsed group header before it auto-expands during drag-and-drop.';
+
+  @override
+  String get appSetting_expandTimerDelay_default => 'Default';
+
+  @override
+  String get appSetting_expandTimerDelay_fast => 'Fast';
+
+  @override
+  String get appSetting_expandTimerDelay_slow => 'Slow';
+
+  @override
   String get appSetting_appThemeColorTile_titleText => 'Theme Color';
 
   @override
@@ -895,6 +1040,22 @@ class L10nFa extends L10n {
       'توجه: وارد کردن ، عادت‌های موجود را حذف نمی‌کند.';
 
   @override
+  String get appSetting_importDialog_option_includeHabits => 'Include habits';
+
+  @override
+  String get appSetting_importDialog_option_includeGroups => 'Include groups';
+
+  @override
+  String appSetting_importDialog_tile_includeHabits(int count) {
+    return 'Include $count habits';
+  }
+
+  @override
+  String appSetting_importDialog_tile_includeGroups(int count) {
+    return 'Include $count groups';
+  }
+
+  @override
   String appSetting_importConfirmDialog_sourceLabel(String provider) {
     return 'Source: $provider';
   }
@@ -932,6 +1093,11 @@ class L10nFa extends L10n {
   @override
   String appSetting_importDialog_completeTitle(int count) {
     return 'ورودی کامل $count';
+  }
+
+  @override
+  String appSetting_importDialog_completeTitleGroups(int count) {
+    return 'Completed import $count groups';
   }
 
   @override
@@ -1674,6 +1840,9 @@ class L10nFa extends L10n {
   String get common_enable_text => 'Enabled';
 
   @override
+  String get common_dontShowAgain => 'Don\'t show again';
+
+  @override
   String get calendarPicker_clip_today => 'امروز';
 
   @override
@@ -1705,6 +1874,19 @@ class L10nFa extends L10n {
 
   @override
   String get exportConfirmDialog_option_includeRecords => 'شامل رکوردها';
+
+  @override
+  String get exportConfirmDialog_option_includeGroups => 'include groups';
+
+  @override
+  String exportConfirmDialog_tile_includeRecords(int count) {
+    return 'Include $count records';
+  }
+
+  @override
+  String exportConfirmDialog_tile_includeGroups(int count) {
+    return 'Include $count groups';
+  }
 
   @override
   String get exportConfirmDialog_cancel_buttonText => 'لغو';
@@ -1863,4 +2045,118 @@ class L10nFa extends L10n {
 
   @override
   String get changelog_view_full => 'View Full Changelog';
+
+  @override
+  String get habitGroup_uncategorized => 'No Group';
+
+  @override
+  String get habitDetail_groupTile_title => 'Group';
+
+  @override
+  String get habitEdit_groupTile_title => 'Group';
+
+  @override
+  String get habitEdit_groupPicker_hintText => 'Search or create group';
+
+  @override
+  String get habitEdit_groupPicker_noGroup => 'No Group';
+
+  @override
+  String habitEdit_groupPicker_createGroup(String name) {
+    return 'Create \"$name\"';
+  }
+
+  @override
+  String get habitEdit_groupPicker_loading => 'Loading groups…';
+
+  @override
+  String get groupManage_appbar_title => 'Manage Groups';
+
+  @override
+  String groupManage_selectionAppbar_title(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get groupManage_emptyState_text =>
+      'No groups yet\nTap + to create your first group';
+
+  @override
+  String get groupManage_deleteDialog_title => 'Delete Group';
+
+  @override
+  String groupManage_deleteDialog_content(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Habits in these $count groups will become uncategorized.',
+      one: 'Habits in this group will become uncategorized.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get groupManage_deleteDialog_confirm => 'حذف';
+
+  @override
+  String get groupManage_deleteDialog_cancel => 'Cancel';
+
+  @override
+  String get groupManage_deleted_snackbarText => 'Group deleted';
+
+  @override
+  String get groupManage_undo_snackbarAction => 'Undo';
+
+  @override
+  String get groupManage_editDialog_title => 'Edit Group';
+
+  @override
+  String get groupManage_createDialog_title => 'Create Group';
+
+  @override
+  String get groupManage_nameRequired => 'Name is required';
+
+  @override
+  String groupManage_nameTooLong(int max) {
+    return 'Name must be ≤ $max characters';
+  }
+
+  @override
+  String get groupManage_name_label => 'بر اساس نام';
+
+  @override
+  String get groupManage_desc_label => 'Description';
+
+  @override
+  String groupManage_descTooLong(int max) {
+    return 'Description should be ≤ $max characters';
+  }
+
+  @override
+  String get groupManage_sortTile_text => 'Sort Groups';
+
+  @override
+  String get groupManage_sectionTitle_text => 'Groups';
+
+  @override
+  String get groupManage_createDateTile_title => 'ایجاد شده';
+
+  @override
+  String get groupManage_modifyDateTile_title => 'ویرایش شده';
+
+  @override
+  String get groupManage_icon_label => 'Icon';
+
+  @override
+  String get groupManage_icon_none => 'ندارد';
+
+  @override
+  String get groupManage_color_label => 'بر اساس رنگ';
+
+  @override
+  String get groupManage_color_none => 'ندارد';
+
+  @override
+  String get appSetting_manageGroups_subtitleText =>
+      'Create, edit, and delete habit groups';
 }

@@ -758,6 +758,160 @@ abstract class L10n {
   /// **'Settings'**
   String get habitDisplay_mainMenu_settingTileText;
 
+  /// No description provided for @habitDisplay_groupType_name.
+  ///
+  /// In en, this message translates to:
+  /// **'By Name'**
+  String get habitDisplay_groupType_name;
+
+  /// No description provided for @habitDisplay_groupType_colorType.
+  ///
+  /// In en, this message translates to:
+  /// **'By Color'**
+  String get habitDisplay_groupType_colorType;
+
+  /// No description provided for @habitDisplay_groupType_createDate.
+  ///
+  /// In en, this message translates to:
+  /// **'By Creation Date'**
+  String get habitDisplay_groupType_createDate;
+
+  /// No description provided for @habitDisplay_groupTypeDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Sort'**
+  String get habitDisplay_groupTypeDialog_title;
+
+  /// No description provided for @habitDisplay_groupTypeDialog_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'confirm'**
+  String get habitDisplay_groupTypeDialog_confirm;
+
+  /// No description provided for @habitDisplay_groupTypeDialog_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'cancel'**
+  String get habitDisplay_groupTypeDialog_cancel;
+
+  /// No description provided for @habitDisplay_groupTypeDialog_none.
+  ///
+  /// In en, this message translates to:
+  /// **'Flat'**
+  String get habitDisplay_groupTypeDialog_none;
+
+  /// No description provided for @habitDisplay_editPopMenu_groupModify.
+  ///
+  /// In en, this message translates to:
+  /// **'Modify Group'**
+  String get habitDisplay_editPopMenu_groupModify;
+
+  /// No description provided for @habitDisplay_groupModifyDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Modify Group'**
+  String get habitDisplay_groupModifyDialog_title;
+
+  /// No description provided for @habitDisplay_groupModifyDialog_removeGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Group'**
+  String get habitDisplay_groupModifyDialog_removeGroup;
+
+  /// No description provided for @habitDisplay_groupModifyDialog_emptyGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'No groups available'**
+  String get habitDisplay_groupModifyDialog_emptyGroups;
+
+  /// No description provided for @habitDisplay_groupModifyDialog_alreadyInGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected habits are already in this group'**
+  String get habitDisplay_groupModifyDialog_alreadyInGroup;
+
+  /// No description provided for @habitDisplay_groupModifyDialog_createGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Group'**
+  String get habitDisplay_groupModifyDialog_createGroup;
+
+  /// No description provided for @habitDisplay_groupModifyDialog_saveAndApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Save & Apply'**
+  String get habitDisplay_groupModifyDialog_saveAndApply;
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_titleNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to Group'**
+  String get habitDisplay_groupModifyConfirm_titleNew;
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_titleMixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Group Change'**
+  String get habitDisplay_groupModifyConfirm_titleMixed;
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_bodyNewGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'{groupName} habits will be moved to this group'**
+  String habitDisplay_groupModifyConfirm_bodyNewGroup(String groupName);
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_bodyRemoveGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Habits will have their group removed'**
+  String get habitDisplay_groupModifyConfirm_bodyRemoveGroup;
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_bodyChangeStat.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1 {{count} habit will change from \"{fromGroup}\" to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\" to \"{toGroup}\"}}'**
+  String habitDisplay_groupModifyConfirm_bodyChangeStat(
+    int count,
+    String fromGroup,
+    String toGroup,
+  );
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_bodyAddStat.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1 {{count} uncategorized habit will be added to \"{toGroup}\"} other {{count} uncategorized habits will be added to \"{toGroup}\"}}'**
+  String habitDisplay_groupModifyConfirm_bodyAddStat(int count, String toGroup);
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_bodyRemoveStat.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1 {{count} habit will have its group removed} other {{count} habits will have their groups removed}}'**
+  String habitDisplay_groupModifyConfirm_bodyRemoveStat(int count);
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_nameSeparator.
+  ///
+  /// In en, this message translates to:
+  /// **', '**
+  String get habitDisplay_groupModifyConfirm_nameSeparator;
+
+  /// No description provided for @habitDisplay_groupModify_snackbarText.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1 {Moved habit to \"{groupName}\"} other {Moved {count} habits to \"{groupName}\"}}'**
+  String habitDisplay_groupModify_snackbarText(int count, String groupName);
+
+  /// No description provided for @habitDisplay_groupModify_snackbarTextRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1 {Removed group from habit} other {Removed groups from {count} habits}}'**
+  String habitDisplay_groupModify_snackbarTextRemoved(int count);
+
+  /// No description provided for @habitDisplay_groupModify_undoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Group has been modified elsewhere, cannot undo'**
+  String get habitDisplay_groupModify_undoFailed;
+
   /// No description provided for @habitDisplay_sort_reverseText.
   ///
   /// In en, this message translates to:
@@ -1352,6 +1506,36 @@ abstract class L10n {
   /// **'Modify the click behavior to open the detailed popup for daily records on main page.'**
   String get appSetting_openRecordStatusDialogOpTile_subtitleText;
 
+  /// Title for the group expand timer delay setting tile
+  ///
+  /// In en, this message translates to:
+  /// **'Group expand delay'**
+  String get appSetting_expandTimerDelayTile_titleText;
+
+  /// No description provided for @appSetting_expandTimerDelayTile_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Set how long to hover over a collapsed group header before it auto-expands during drag-and-drop.'**
+  String get appSetting_expandTimerDelayTile_subtitleText;
+
+  /// No description provided for @appSetting_expandTimerDelay_default.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get appSetting_expandTimerDelay_default;
+
+  /// No description provided for @appSetting_expandTimerDelay_fast.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast'**
+  String get appSetting_expandTimerDelay_fast;
+
+  /// No description provided for @appSetting_expandTimerDelay_slow.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow'**
+  String get appSetting_expandTimerDelay_slow;
+
   /// No description provided for @appSetting_appThemeColorTile_titleText.
   ///
   /// In en, this message translates to:
@@ -1556,6 +1740,30 @@ abstract class L10n {
   /// **'Note: Import doesn\'t delete existing habits.'**
   String get appSetting_importDialog_confirmSubtitle;
 
+  /// No description provided for @appSetting_importDialog_option_includeHabits.
+  ///
+  /// In en, this message translates to:
+  /// **'Include habits'**
+  String get appSetting_importDialog_option_includeHabits;
+
+  /// No description provided for @appSetting_importDialog_option_includeGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Include groups'**
+  String get appSetting_importDialog_option_includeGroups;
+
+  /// No description provided for @appSetting_importDialog_tile_includeHabits.
+  ///
+  /// In en, this message translates to:
+  /// **'Include {count} habits'**
+  String appSetting_importDialog_tile_includeHabits(int count);
+
+  /// No description provided for @appSetting_importDialog_tile_includeGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Include {count} groups'**
+  String appSetting_importDialog_tile_includeGroups(int count);
+
   /// No description provided for @appSetting_importConfirmDialog_sourceLabel.
   ///
   /// In en, this message translates to:
@@ -1610,8 +1818,14 @@ abstract class L10n {
   /// No description provided for @appSetting_importDialog_completeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Complete import {count}'**
+  /// **'Complete import {count} habits'**
   String appSetting_importDialog_completeTitle(int count);
+
+  /// No description provided for @appSetting_importDialog_completeTitleGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed import {count} groups'**
+  String appSetting_importDialog_completeTitleGroups(int count);
 
   /// No description provided for @appSetting_importDialog_complete_closeLabel.
   ///
@@ -2705,6 +2919,12 @@ abstract class L10n {
   /// **'Enabled'**
   String get common_enable_text;
 
+  /// No description provided for @common_dontShowAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t show again'**
+  String get common_dontShowAgain;
+
   /// No description provided for @calendarPicker_clip_today.
   ///
   /// In en, this message translates to:
@@ -2740,6 +2960,24 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'include records'**
   String get exportConfirmDialog_option_includeRecords;
+
+  /// No description provided for @exportConfirmDialog_option_includeGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'include groups'**
+  String get exportConfirmDialog_option_includeGroups;
+
+  /// No description provided for @exportConfirmDialog_tile_includeRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Include {count} records'**
+  String exportConfirmDialog_tile_includeRecords(int count);
+
+  /// No description provided for @exportConfirmDialog_tile_includeGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Include {count} groups'**
+  String exportConfirmDialog_tile_includeGroups(int count);
 
   /// No description provided for @exportConfirmDialog_cancel_buttonText.
   ///
@@ -3016,6 +3254,198 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'View Full Changelog'**
   String get changelog_view_full;
+
+  /// Virtual group name for habits without a group
+  ///
+  /// In en, this message translates to:
+  /// **'No Group'**
+  String get habitGroup_uncategorized;
+
+  /// Title for the group info tile on the habit detail page
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get habitDetail_groupTile_title;
+
+  /// Title for the group selector tile on the habit edit page
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get habitEdit_groupTile_title;
+
+  /// Placeholder text for the group picker search field
+  ///
+  /// In en, this message translates to:
+  /// **'Search or create group'**
+  String get habitEdit_groupPicker_hintText;
+
+  /// Option text for selecting no group
+  ///
+  /// In en, this message translates to:
+  /// **'No Group'**
+  String get habitEdit_groupPicker_noGroup;
+
+  /// Button text to create a new group with the given name
+  ///
+  /// In en, this message translates to:
+  /// **'Create \"{name}\"'**
+  String habitEdit_groupPicker_createGroup(String name);
+
+  /// Placeholder text shown in the group picker while groups are loading
+  ///
+  /// In en, this message translates to:
+  /// **'Loading groups…'**
+  String get habitEdit_groupPicker_loading;
+
+  /// Title for the Group management page AppBar
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Groups'**
+  String get groupManage_appbar_title;
+
+  /// AppBar title in selection mode, {count} = number of selected groups
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String groupManage_selectionAppbar_title(int count);
+
+  /// Empty state text shown when no groups exist
+  ///
+  /// In en, this message translates to:
+  /// **'No groups yet\nTap + to create your first group'**
+  String get groupManage_emptyState_text;
+
+  /// Title for the delete confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Group'**
+  String get groupManage_deleteDialog_title;
+
+  /// Content body for the delete confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1 {Habits in this group will become uncategorized.} other {Habits in these {count} groups will become uncategorized.}}'**
+  String groupManage_deleteDialog_content(int count);
+
+  /// Confirm button text for delete dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get groupManage_deleteDialog_confirm;
+
+  /// Cancel button text for delete dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get groupManage_deleteDialog_cancel;
+
+  /// SnackBar text after successful group deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Group deleted'**
+  String get groupManage_deleted_snackbarText;
+
+  /// SnackBar undo button text
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get groupManage_undo_snackbarAction;
+
+  /// Title for the group edit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Group'**
+  String get groupManage_editDialog_title;
+
+  /// Title for the group creation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Create Group'**
+  String get groupManage_createDialog_title;
+
+  /// Validation error when group name is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get groupManage_nameRequired;
+
+  /// Validation error when group name exceeds max length
+  ///
+  /// In en, this message translates to:
+  /// **'Name must be ≤ {max} characters'**
+  String groupManage_nameTooLong(int max);
+
+  /// Label for the group name input field
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get groupManage_name_label;
+
+  /// Label for the group description input field
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get groupManage_desc_label;
+
+  /// Validation warning when group description exceeds recommended length
+  ///
+  /// In en, this message translates to:
+  /// **'Description should be ≤ {max} characters'**
+  String groupManage_descTooLong(int max);
+
+  /// Label for the sort selector entry
+  ///
+  /// In en, this message translates to:
+  /// **'Sort Groups'**
+  String get groupManage_sortTile_text;
+
+  /// Section header text for Groups in Settings page
+  ///
+  /// In en, this message translates to:
+  /// **'Groups'**
+  String get groupManage_sectionTitle_text;
+
+  /// Label shown for the group creation date in the edit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get groupManage_createDateTile_title;
+
+  /// Label shown for the group modification date in the edit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Modified'**
+  String get groupManage_modifyDateTile_title;
+
+  /// Section label for the icon picker in group create/edit forms
+  ///
+  /// In en, this message translates to:
+  /// **'Icon'**
+  String get groupManage_icon_label;
+
+  /// Tooltip for the 'no icon' option in the group icon picker
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get groupManage_icon_none;
+
+  /// Section label for the color picker in group create/edit forms
+  ///
+  /// In en, this message translates to:
+  /// **'Color'**
+  String get groupManage_color_label;
+
+  /// Tooltip for the 'no color' option in the group color picker
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get groupManage_color_none;
+
+  /// Subtitle for the Manage Groups tile in Settings
+  ///
+  /// In en, this message translates to:
+  /// **'Create, edit, and delete habit groups'**
+  String get appSetting_manageGroups_subtitleText;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

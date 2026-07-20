@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 import '../../../common/consts.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_stat.dart';
+import '../../../providers/app_ui/app_experimental_feature.dart';
 import '../../../widgets/widgets.dart';
 import '../_providers/habit_summary.dart';
 import '../widgets.dart';
@@ -100,6 +101,7 @@ class SliverEditTopAppBarAction extends StatelessWidget {
   final VoidCallback? onClone;
   final void Function(BuildContext context)? onExportAll;
   final VoidCallback? onDelete;
+  final VoidCallback? onGroupModify;
 
   const SliverEditTopAppBarAction({
     super.key,
@@ -110,6 +112,7 @@ class SliverEditTopAppBarAction extends StatelessWidget {
     this.onClone,
     this.onExportAll,
     this.onDelete,
+    this.onGroupModify,
   });
 
   @override
@@ -119,6 +122,9 @@ class SliverEditTopAppBarAction extends StatelessWidget {
         .select<HabitSummaryViewModel, HabitSummarySelectedStatistic>(
           (vm) => vm.selectStatistic,
         );
+    final habitGrouping = context.select<AppExperimentalFeatureViewModel, bool>(
+      (vm) => vm.habitGrouping,
+    );
     final onExportAll = this.onExportAll;
     return AppBarActions<EditModeActionItemConfig, EditModeActionItemCell>(
       buttonSwitchAnimateDuration: kEditModeAppbarAnimateDuration,
@@ -155,6 +161,11 @@ class SliverEditTopAppBarAction extends StatelessWidget {
           text: l10n?.habitDisplay_editPopMenu_delete ?? 'Delete',
           callback: onDelete,
         ),
+        if (habitGrouping)
+          EditModeActionItemConfig.groupModify(
+            text: l10n?.habitDisplay_editPopMenu_groupModify ?? 'Modify Group',
+            callback: onGroupModify,
+          ),
       ],
     );
   }

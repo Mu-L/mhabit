@@ -16,15 +16,18 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
+import '../../providers/app_ui/app_experimental_feature.dart';
 import '../../providers/app_ui/app_first_day.dart';
 import '../../providers/app_ui/habits_filter.dart';
 import '../../providers/app_ui/habits_sort.dart';
 import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_sync.dart';
+import '../../providers/workflow/group_manager.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../storage/profile_provider.dart';
 import '../../widgets/provider.dart';
 import '_providers/habit_summary.dart';
+import '_providers/habits_grouping.dart';
 import '_providers/habits_today.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
@@ -33,6 +36,9 @@ class PageProviders extends SingleChildStatelessWidget {
   Iterable<SingleChildWidget> _buildPageViewModel() => [
     ChangeNotifierProvider<HabitSummaryViewModel>(
       create: (context) => HabitSummaryViewModel(),
+    ),
+    ViewModelProxyProvider<GroupManager, HabitSummaryViewModel>(
+      update: (context, value, previous) => previous..attachGroupManager(value),
     ),
     ViewModelProxyProvider<HabitsDisplayAccess, HabitSummaryViewModel>(
       update: (context, value, previous) => previous..attachAccess(value),
@@ -52,6 +58,17 @@ class PageProviders extends SingleChildStatelessWidget {
         ..updateSortOptions(sortOptions.sortType, sortOptions.sortDirection)
         ..updateHabitDisplayFilter(habitDisplayFilter.habitsDisplayFilter),
       post: (t, _, _, vm) => vm.resortData(),
+    ),
+    ViewModelProxyProvider<HabitsGroupingViewModel, HabitSummaryViewModel>(
+      update: (context, value, previous) {
+        previous.updateGroupingEnabled(value.isGroupingEnabled);
+        final groupType = value.groupType;
+        if (groupType != null) {
+          previous.updateGroupOptions(groupType, value.groupDirection);
+        }
+        return previous;
+      },
+      post: (t, _, vm) => vm.resortData(),
     ),
     ViewModelProxyProvider<AppFirstDayViewModel, HabitSummaryViewModel>(
       update: (context, value, previous) =>
@@ -99,6 +116,19 @@ class PageProviders extends SingleChildStatelessWidget {
         create: (context) => HabitsFilterViewModel(),
         update: (context, profile, previous) =>
             previous..updateProfile(profile),
+      ),
+      ViewModelProxyProvider<ProfileViewModel, HabitsGroupingViewModel>(
+        create: (context) => HabitsGroupingViewModel(),
+        update: (context, profile, previous) =>
+            previous..updateProfile(profile),
+      ),
+      ViewModelProxyProvider<
+        AppExperimentalFeatureViewModel,
+        HabitsGroupingViewModel
+      >(
+        update: (context, experimental, previous) =>
+            previous..updateExperimentalGrouping(experimental.habitGrouping),
+        post: (t, _, vm) => vm.requestReload(),
       ),
       ..._buildPageViewModel(),
       ..._buildTodayViewModel(),

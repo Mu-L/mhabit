@@ -366,6 +366,114 @@
     "@habitDisplay_mainMenu_showActivedTileText": {},
     "habitDisplay_mainMenu_settingTileText": "Settings",
     "@habitDisplay_mainMenu_settingTileText": {},
+    "habitDisplay_groupType_name": "By Name",
+    "@habitDisplay_groupType_name": {},
+    "habitDisplay_groupType_colorType": "By Color",
+    "@habitDisplay_groupType_colorType": {},
+    "habitDisplay_groupType_createDate": "By Creation Date",
+    "@habitDisplay_groupType_createDate": {},
+    "habitDisplay_groupTypeDialog_title": "Group Sort",
+    "@habitDisplay_groupTypeDialog_title": {},
+    "habitDisplay_groupTypeDialog_confirm": "confirm",
+    "@habitDisplay_groupTypeDialog_confirm": {},
+    "habitDisplay_groupTypeDialog_cancel": "cancel",
+    "@habitDisplay_groupTypeDialog_cancel": {},
+    "habitDisplay_groupTypeDialog_none": "Flat",
+    "@habitDisplay_groupTypeDialog_none": {},
+    "habitDisplay_editPopMenu_groupModify": "Modify Group",
+    "@habitDisplay_editPopMenu_groupModify": {},
+    "habitDisplay_groupModifyDialog_title": "Modify Group",
+    "@habitDisplay_groupModifyDialog_title": {},
+    "habitDisplay_groupModifyDialog_removeGroup": "Remove Group",
+    "@habitDisplay_groupModifyDialog_removeGroup": {},
+    "habitDisplay_groupModifyDialog_emptyGroups": "No groups available",
+    "@habitDisplay_groupModifyDialog_emptyGroups": {},
+    "habitDisplay_groupModifyDialog_alreadyInGroup": "Selected habits are already in this group",
+    "@habitDisplay_groupModifyDialog_alreadyInGroup": {},
+    "habitDisplay_groupModifyDialog_createGroup": "Create Group",
+    "@habitDisplay_groupModifyDialog_createGroup": {},
+    "habitDisplay_groupModifyDialog_saveAndApply": "Save & Apply",
+    "@habitDisplay_groupModifyDialog_saveAndApply": {},
+    "habitDisplay_groupModifyConfirm_titleNew": "Move to Group",
+    "@habitDisplay_groupModifyConfirm_titleNew": {},
+    "habitDisplay_groupModifyConfirm_titleMixed": "Confirm Group Change",
+    "@habitDisplay_groupModifyConfirm_titleMixed": {},
+    "habitDisplay_groupModifyConfirm_bodyNewGroup": "{groupName} habits will be moved to this group",
+    "@habitDisplay_groupModifyConfirm_bodyNewGroup": {
+        "placeholders": {
+            "groupName": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "Habits will have their group removed",
+    "@habitDisplay_groupModifyConfirm_bodyRemoveGroup": {},
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} habit will change from \"{fromGroup}\" to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\" to \"{toGroup}\"}}",
+    "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits changing group"
+            },
+            "fromGroup": {
+                "type": "String",
+                "description": "Old group name"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "New group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyAddStat": "{count, plural, =1 {{count} uncategorized habit will be added to \"{toGroup}\"} other {{count} uncategorized habits will be added to \"{toGroup}\"}}",
+    "@habitDisplay_groupModifyConfirm_bodyAddStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being added"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyRemoveStat": "{count, plural, =1 {{count} habit will have its group removed} other {{count} habits will have their groups removed}}",
+    "@habitDisplay_groupModifyConfirm_bodyRemoveStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being removed"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_nameSeparator": ", ",
+    "@habitDisplay_groupModifyConfirm_nameSeparator": {},
+    "habitDisplay_groupModify_snackbarText": "{count, plural, =1 {Moved habit to \"{groupName}\"} other {Moved {count} habits to \"{groupName}\"}}",
+    "@habitDisplay_groupModify_snackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of modified habits"
+            },
+            "groupName": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModify_snackbarTextRemoved": "{count, plural, =1 {Removed group from habit} other {Removed groups from {count} habits}}",
+    "@habitDisplay_groupModify_snackbarTextRemoved": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits"
+            }
+        }
+    },
+    "habitDisplay_groupModify_undoFailed": "Group has been modified elsewhere, cannot undo",
+    "@habitDisplay_groupModify_undoFailed": {},
     "habitDisplay_sort_reverseText": "Reverse",
     "@habitDisplay_sort_reverseText": {},
     "habitDisplay_sortDirection_asc": "(Asc)",
@@ -658,6 +766,18 @@
     "@appSetting_openRecordStatusDialogOpTile_titleText": {},
     "appSetting_openRecordStatusDialogOpTile_subtitleText": "Modify the click behavior to open the detailed popup for daily records on main page.",
     "@appSetting_openRecordStatusDialogOpTile_subtitleText": {},
+    "appSetting_expandTimerDelayTile_titleText": "Group expand delay",
+    "@appSetting_expandTimerDelayTile_titleText": {
+        "description": "Title for the group expand timer delay setting tile"
+    },
+    "appSetting_expandTimerDelayTile_subtitleText": "Set how long to hover over a collapsed group header before it auto-expands during drag-and-drop.",
+    "@appSetting_expandTimerDelayTile_subtitleText": {},
+    "appSetting_expandTimerDelay_default": "Default",
+    "@appSetting_expandTimerDelay_default": {},
+    "appSetting_expandTimerDelay_fast": "Fast",
+    "@appSetting_expandTimerDelay_fast": {},
+    "appSetting_expandTimerDelay_slow": "Slow",
+    "@appSetting_expandTimerDelay_slow": {},
     "appSetting_appThemeColorTile_titleText": "Theme Color",
     "@appSetting_appThemeColorTile_titleText": {},
     "appSetting_appThemeColorChosenDiloag_titleText": "Choose Theme Color",
@@ -749,6 +869,28 @@
     },
     "appSetting_importDialog_confirmSubtitle": "Note: Import doesn't delete existing habits.",
     "@appSetting_importDialog_confirmSubtitle": {},
+    "appSetting_importDialog_option_includeHabits": "Include habits",
+    "@appSetting_importDialog_option_includeHabits": {},
+    "appSetting_importDialog_option_includeGroups": "Include groups",
+    "@appSetting_importDialog_option_includeGroups": {},
+    "appSetting_importDialog_tile_includeHabits": "Include {count} habits",
+    "@appSetting_importDialog_tile_includeHabits": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "appSetting_importDialog_tile_includeGroups": "Include {count} groups",
+    "@appSetting_importDialog_tile_includeGroups": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
     "appSetting_importConfirmDialog_sourceLabel": "Source: {provider}",
     "@appSetting_importConfirmDialog_sourceLabel": {
         "placeholders": {
@@ -783,8 +925,17 @@
             }
         }
     },
-    "appSetting_importDialog_completeTitle": "Complete import {count}",
+    "appSetting_importDialog_completeTitle": "Complete import {count} habits",
     "@appSetting_importDialog_completeTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_completeTitleGroups": "Completed import {count} groups",
+    "@appSetting_importDialog_completeTitleGroups": {
         "placeholders": {
             "count": {
                 "type": "int",
@@ -1388,6 +1539,8 @@
     "@common_errorPage_copied": {},
     "common_enable_text": "Enabled",
     "@common_enable_text": {},
+    "common_dontShowAgain": "Don't show again",
+    "@common_dontShowAgain": {},
     "calendarPicker_clip_today": "Today",
     "@calendarPicker_clip_today": {},
     "calendarPicker_clip_tomorrow": "Tomorrow",
@@ -1414,6 +1567,26 @@
     },
     "exportConfirmDialog_option_includeRecords": "include records",
     "@exportConfirmDialog_option_includeRecords": {},
+    "exportConfirmDialog_option_includeGroups": "include groups",
+    "@exportConfirmDialog_option_includeGroups": {},
+    "exportConfirmDialog_tile_includeRecords": "Include {count} records",
+    "@exportConfirmDialog_tile_includeRecords": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "exportConfirmDialog_tile_includeGroups": "Include {count} groups",
+    "@exportConfirmDialog_tile_includeGroups": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
     "exportConfirmDialog_cancel_buttonText": "cancel",
     "@exportConfirmDialog_cancel_buttonText": {},
     "exportConfirmDialog_confirm_buttonText": "export",
@@ -1534,5 +1707,160 @@
     "changelog_view_full": "View Full Changelog",
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
+    },
+    "habitGroup_uncategorized": "No Group",
+    "@habitGroup_uncategorized": {
+        "description": "Virtual group name for habits without a group"
+    },
+    "habitDetail_groupTile_title": "Group",
+    "@habitDetail_groupTile_title": {
+        "description": "Title for the group info tile on the habit detail page"
+    },
+    "habitEdit_groupTile_title": "Group",
+    "@habitEdit_groupTile_title": {
+        "description": "Title for the group selector tile on the habit edit page"
+    },
+    "habitEdit_groupPicker_hintText": "Search or create group",
+    "@habitEdit_groupPicker_hintText": {
+        "description": "Placeholder text for the group picker search field"
+    },
+    "habitEdit_groupPicker_noGroup": "No Group",
+    "@habitEdit_groupPicker_noGroup": {
+        "description": "Option text for selecting no group"
+    },
+    "habitEdit_groupPicker_createGroup": "Create \"{name}\"",
+    "@habitEdit_groupPicker_createGroup": {
+        "description": "Button text to create a new group with the given name",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "Work"
+            }
+        }
+    },
+    "habitEdit_groupPicker_loading": "Loading groups…",
+    "@habitEdit_groupPicker_loading": {
+        "description": "Placeholder text shown in the group picker while groups are loading"
+    },
+    "groupManage_appbar_title": "Manage Groups",
+    "@groupManage_appbar_title": {
+        "description": "Title for the Group management page AppBar"
+    },
+    "groupManage_selectionAppbar_title": "{count} selected",
+    "@groupManage_selectionAppbar_title": {
+        "description": "AppBar title in selection mode, {count} = number of selected groups",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_emptyState_text": "No groups yet\nTap + to create your first group",
+    "@groupManage_emptyState_text": {
+        "description": "Empty state text shown when no groups exist"
+    },
+    "groupManage_deleteDialog_title": "Delete Group",
+    "@groupManage_deleteDialog_title": {
+        "description": "Title for the delete confirmation dialog"
+    },
+    "groupManage_deleteDialog_content": "{count, plural, =1 {Habits in this group will become uncategorized.} other {Habits in these {count} groups will become uncategorized.}}",
+    "@groupManage_deleteDialog_content": {
+        "description": "Content body for the delete confirmation dialog",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of groups being deleted"
+            }
+        }
+    },
+    "groupManage_deleteDialog_confirm": "Delete",
+    "@groupManage_deleteDialog_confirm": {
+        "description": "Confirm button text for delete dialog"
+    },
+    "groupManage_deleteDialog_cancel": "Cancel",
+    "@groupManage_deleteDialog_cancel": {
+        "description": "Cancel button text for delete dialog"
+    },
+    "groupManage_deleted_snackbarText": "Group deleted",
+    "@groupManage_deleted_snackbarText": {
+        "description": "SnackBar text after successful group deletion"
+    },
+    "groupManage_undo_snackbarAction": "Undo",
+    "@groupManage_undo_snackbarAction": {
+        "description": "SnackBar undo button text"
+    },
+    "groupManage_editDialog_title": "Edit Group",
+    "@groupManage_editDialog_title": {
+        "description": "Title for the group edit dialog"
+    },
+    "groupManage_createDialog_title": "Create Group",
+    "@groupManage_createDialog_title": {
+        "description": "Title for the group creation dialog"
+    },
+    "groupManage_nameRequired": "Name is required",
+    "@groupManage_nameRequired": {
+        "description": "Validation error when group name is empty"
+    },
+    "groupManage_nameTooLong": "Name must be ≤ {max} characters",
+    "@groupManage_nameTooLong": {
+        "description": "Validation error when group name exceeds max length",
+        "placeholders": {
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_name_label": "Name",
+    "@groupManage_name_label": {
+        "description": "Label for the group name input field"
+    },
+    "groupManage_desc_label": "Description",
+    "@groupManage_desc_label": {
+        "description": "Label for the group description input field"
+    },
+    "groupManage_descTooLong": "Description should be ≤ {max} characters",
+    "@groupManage_descTooLong": {
+        "description": "Validation warning when group description exceeds recommended length",
+        "placeholders": {
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_sortTile_text": "Sort Groups",
+    "@groupManage_sortTile_text": {
+        "description": "Label for the sort selector entry"
+    },
+    "groupManage_sectionTitle_text": "Groups",
+    "@groupManage_sectionTitle_text": {
+        "description": "Section header text for Groups in Settings page"
+    },
+    "groupManage_createDateTile_title": "Created",
+    "@groupManage_createDateTile_title": {
+        "description": "Label shown for the group creation date in the edit dialog"
+    },
+    "groupManage_modifyDateTile_title": "Modified",
+    "@groupManage_modifyDateTile_title": {
+        "description": "Label shown for the group modification date in the edit dialog"
+    },
+    "groupManage_icon_label": "Icon",
+    "@groupManage_icon_label": {
+        "description": "Section label for the icon picker in group create/edit forms"
+    },
+    "groupManage_icon_none": "None",
+    "@groupManage_icon_none": {
+        "description": "Tooltip for the 'no icon' option in the group icon picker"
+    },
+    "groupManage_color_label": "Color",
+    "@groupManage_color_label": {
+        "description": "Section label for the color picker in group create/edit forms"
+    },
+    "groupManage_color_none": "None",
+    "@groupManage_color_none": {
+        "description": "Tooltip for the 'no color' option in the group color picker"
+    },
+    "appSetting_manageGroups_subtitleText": "Create, edit, and delete habit groups",
+    "@appSetting_manageGroups_subtitleText": {
+        "description": "Subtitle for the Manage Groups tile in Settings"
     }
 }

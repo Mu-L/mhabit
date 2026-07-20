@@ -48,6 +48,17 @@ BEGIN
 END
 """;
 
+  static const String autoUpdateGroupsModifyTimeTrigger =
+      """
+CREATE TRIGGER auto_update_mh_groups_modify_t
+AFTER UPDATE ON ${TableName.groups}
+BEGIN
+  UPDATE ${TableName.groups}
+  SET modify_t = (cast(strftime('%s','now') as int))
+  WHERE uuid = NEW.uuid;
+END
+""";
+
   static const String rmAutoAddSortPostionWhenAddNewHabitTrigger = """
 DROP TRIGGER IF EXISTS auto_insert_mh_habits_sort_position;
 """;
@@ -159,6 +170,29 @@ END
         "= COALESCE(${SyncDbCellKey.dirtyTotal}, 0) + 1",
       )
       ..write(" WHERE ${SyncDbCellKey.habitUUID} = ?");
+
+    return sql.toString();
+  }
+
+  /// required arguments: [groupUUID]
+  static String increaseGroupSyncDirtySql({
+    ConflictAlgorithm? conflictAlgorithm,
+  }) {
+    final sql = StringBuffer();
+    sql.write("UPDATE");
+    if (conflictAlgorithm != null) {
+      sql
+        ..write(" ")
+        ..write(buildConflictAlgorithm(conflictAlgorithm));
+    }
+    sql
+      ..write(" ${TableName.sync}")
+      ..write(
+        " SET ${SyncDbCellKey.dirtyTotal} "
+        "= COALESCE(${SyncDbCellKey.dirtyTotal}, 0) + 1",
+      )
+      ..write(", ${SyncDbCellKey.dirty} = ${SyncDbCellKey.dirty} + 1")
+      ..write(" WHERE ${SyncDbCellKey.groupUUID} = ?");
 
     return sql.toString();
   }

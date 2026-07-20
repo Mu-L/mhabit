@@ -34,6 +34,7 @@ import 'habit_date.dart';
 import 'habit_display.dart';
 import 'habit_form.dart';
 import 'habit_freq.dart';
+import 'habit_group.dart';
 import 'habit_reminder.dart';
 import 'habit_score.dart';
 
@@ -41,7 +42,7 @@ part 'habit_summary.g.dart';
 
 enum HabitReocrdAddRepeatedBehaviour { failed, skipped, replaced }
 
-abstract class HabitSortCache<T> {
+sealed class HabitSortCache<T> {
   bool isSameItem(HabitSortCache? other);
   bool isSameContent(T? other);
 }
@@ -345,6 +346,7 @@ class HabitSummaryData with DirtyMarkMixin {
   String? reminderQuest;
   HabitSortPostion sortPostion;
   DateTime createTime;
+  String? groupId;
 
   final _records = _HabitSummaryRecordIndex();
   num _progress = 0.0;
@@ -403,6 +405,7 @@ class HabitSummaryData with DirtyMarkMixin {
     this.reminderQuest,
     required this.sortPostion,
     required this.createTime,
+    this.groupId,
   });
 
   HabitSummaryData.fromDBQueryCell(HabitDBCell cell)
@@ -432,7 +435,8 @@ class HabitSummaryData with DirtyMarkMixin {
       sortPostion = cell.sortPosition!,
       createTime = DateTime.fromMillisecondsSinceEpoch(
         cell.createT! * onSecondMS,
-      );
+      ),
+      groupId = cell.groupId;
 
   num get progress => _progress.isFinite ? _progress : -1.0;
 
@@ -596,7 +600,7 @@ class HabitSummaryDataCollection {
   List<HabitSummaryData> sort(
     HabitDisplaySortType sortType,
     HabitDisplaySortDirection sortDirection,
-  ) => _dataMap.values.sortBy(sortType, sortDirection);
+  ) => _dataMap.values.sortedBy(sortType, sortDirection);
   //#endregion
 
   @override
@@ -686,8 +690,8 @@ extension on HabitSummaryDataCollection {
   }
 }
 
-extension on Iterable<HabitSummaryData> {
-  List<HabitSummaryData> sortBy(
+extension HabitSummarySortExtension on Iterable<HabitSummaryData> {
+  List<HabitSummaryData> sortedBy(
     HabitDisplaySortType sortType,
     HabitDisplaySortDirection sortDirection,
   ) {
@@ -817,7 +821,63 @@ extension on Iterable<HabitSummaryData> {
   }
 }
 
-class HabitSummaryDataSortCache
+/// Reassigns [HabitSummaryData.sortPostion] to match iteration order.
+///
+/// Collects all existing weights, sorts them, then assigns them in
+/// ascending order following the iteration order of [this].  The
+/// pre-existing [sortPostion] multiset is preserved; only the mapping
+/// from values to positions changes.
+///
+/// Group-agnostic: this operates on a flat list of habits regardless of
+/// group membership.  Both grouped and ungrouped reorder paths use the
+/// same algorithm — the caller is responsible for providing the habits
+/// in the desired flat order.
+extension HabitSortReassignmentExtension on Iterable<HabitSummaryData> {
+  void reassignSortPositions() {
+    final list = toList();
+    if (list.isEmpty) return;
+
+    final weights = list.map((h) => h.sortPostion).toList()..sort();
+    for (final (i, h) in list.indexed) {
+      h.sortPostion = weights[i];
+    }
+  }
+}
+
+final class GroupHeaderSortCache extends HabitSortCache<GroupHeaderSortCache> {
+  final String? groupUUID;
+  final String name;
+  final GroupIcon? icon;
+  final HabitColor? color;
+  int count;
+
+  GroupHeaderSortCache({
+    required this.groupUUID,
+    required this.name,
+    this.icon,
+    this.color,
+    this.count = 0,
+  });
+
+  bool get isUncategorized => groupUUID == null;
+
+  @override
+  bool isSameItem(HabitSortCache? other) {
+    if (other == null || other is! GroupHeaderSortCache) return false;
+    return groupUUID == other.groupUUID;
+  }
+
+  @override
+  bool isSameContent(GroupHeaderSortCache? other) {
+    if (other == null) return false;
+    return name == other.name &&
+        count == other.count &&
+        icon == other.icon &&
+        color == other.color;
+  }
+}
+
+final class HabitSummaryDataSortCache
     extends HabitSortCache<HabitSummaryDataSortCache> {
   final HabitUUID uuid;
   final WeakReference<HabitSummaryData> _data;

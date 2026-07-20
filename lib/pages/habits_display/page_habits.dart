@@ -43,6 +43,7 @@ import '../../providers/app_ui/app_compact_ui_switcher.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../providers/app_ui/app_experimental_feature.dart';
 import '../../providers/app_ui/app_theme.dart';
+import '../../providers/app_ui/group_expand_timer_config.dart';
 import '../../providers/app_ui/habit_op_config.dart';
 import '../../providers/app_ui/habits_filter.dart';
 import '../../providers/app_ui/habits_record_scroll_behavior.dart';
@@ -61,7 +62,9 @@ import '../habit_detail/page.dart' as habit_detail;
 import '../habit_edit/page.dart' as habit_edit;
 import '../habits_status_changer/page.dart' as habits_status_changer;
 import '_providers/habit_summary.dart';
+import '_providers/habits_grouping.dart';
 import 'extensions.dart';
+import 'helpers.dart';
 import 'widgets.dart';
 
 class HabitsTabPage extends StatefulWidget {
@@ -90,6 +93,8 @@ class HabitsTabPageState extends State<HabitsTabPage>
   late StreamSubscription<Duration?> _scrollCalendarToStartSub;
   Completer<void>? _horizonalScrolling;
   double _lastHorizonalScrollOffset = 0.0;
+
+  Timer? _expandGroupTimer;
 
   @override
   void initState() {
@@ -134,6 +139,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
   @override
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    _cancelExpandTimer();
     _scrollCalendarToStartSub.cancel();
     _scrollVisibilityDispatcher.dispose();
     super.dispose();
@@ -394,11 +400,15 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
   void _openHabitSummaryMenuDialog() async {
     if (!mounted) return;
+    final groupingVM = context.read<HabitsGroupingViewModel>();
     final result = await showHabitDisplayMainMenuDialog(
       context: context,
       sortType: context.read<HabitsSortViewModel>().sortType,
       sortDirection: context.read<HabitsSortViewModel>().sortDirection,
+      groupType: groupingVM.groupType,
+      groupDirection: groupingVM.groupDirection,
       habitFilter: context.read<HabitsFilterViewModel>(),
+      grouping: groupingVM,
       appTheme: context.read<AppThemeViewModel>(),
     );
 
@@ -410,6 +420,11 @@ class HabitsTabPageState extends State<HabitsTabPage>
         await Future.delayed(const Duration(milliseconds: 300));
         if (!mounted) return;
         _openHabitSummarySortSelectorDialog();
+        break;
+      case HabitDisplayMainMenuDialogOpr.showGroupMenu:
+        await Future.delayed(const Duration(milliseconds: 300));
+        if (!mounted) return;
+        _openHabitSummaryGroupSelectorDialog();
         break;
       case HabitDisplayMainMenuDialogOpr.openSettings:
         if (!mounted) return;
@@ -439,6 +454,27 @@ class HabitsTabPageState extends State<HabitsTabPage>
       sortType: result.item1,
       sortDirection: result.item2,
     );
+  }
+
+  void _openHabitSummaryGroupSelectorDialog() async {
+    if (!mounted) return;
+    final groupingVM = context.read<HabitsGroupingViewModel>();
+    final result = await showHabitDisplayGroupTypePickerDialog(
+      context: context,
+      groupType: groupingVM.groupType,
+      groupDirection: groupingVM.groupDirection,
+    );
+
+    if (!mounted || result == null) return;
+    final (groupType, groupDirection) = result;
+    if (groupType == null) {
+      groupingVM.disableGrouping();
+    } else {
+      groupingVM.setGroupMode(
+        groupType: groupType,
+        groupDirection: groupDirection,
+      );
+    }
   }
 
   void _openHabitRecordResonModifierDialog(
@@ -554,7 +590,10 @@ class HabitsTabPageState extends State<HabitsTabPage>
         .read<HabitFileExportRunner>()
         .exportMultiHabitsData(
           habitUUIDList,
-          withRecords: confirmResult == ExporterConfirmResultType.withRecords,
+          withRecords: confirmResult.contains(
+            ExporterConfirmResultType.records,
+          ),
+          withGroups: confirmResult.contains(ExporterConfirmResultType.groups),
         );
 
     if (!context.mounted || filePath == null) return;
@@ -676,6 +715,138 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
   void _onAppbarDeleteActionPressed() => _openHabitDeleteConfirmDialog(context);
 
+  void _openHabitGroupModifyDialog() async {
+    if (!mounted) return;
+
+    final vm = context.read<HabitSummaryViewModel>();
+    final selectedData = vm.getSelectedHabitsData().nonNulls.toList();
+    if (selectedData.isEmpty) return;
+
+    final selectorResult = await showHabitGroupModifySelector(
+      context: context,
+      selectedHabitsData: selectedData,
+    );
+    if (selectorResult == null || !mounted) return;
+
+    switch (selectorResult) {
+      case GroupModifySelectorCancelled():
+        return;
+      case GroupModifySelectorRemoveGroup():
+        return;
+      case GroupModifySelectorSelected(
+        :final groupId,
+        :final affectedHabits,
+        :final targetGroupName,
+      ):
+        await _executeBatchGroupModify(
+          affectedHabits: affectedHabits,
+          targetGroupId: groupId,
+          targetGroupName: targetGroupName,
+        );
+    }
+  }
+
+  Future<void> _executeBatchGroupModify({
+    required List<HabitGroupModifyItem> affectedHabits,
+    required GroupUUID? targetGroupId,
+    required String? targetGroupName,
+  }) async {
+    if (!mounted) return;
+
+    // Snapshot old group IDs for undo validation.
+    final oldGroupIds = <String, GroupUUID?>{
+      for (final h in affectedHabits) h.uuid: h.oldGroupId,
+    };
+    final newGroupIds = <String, GroupUUID?>{
+      for (final h in affectedHabits) h.uuid: targetGroupId,
+    };
+
+    final vm = context.read<HabitSummaryViewModel>();
+    final count = await vm.executeBatchGroupModify(
+      affectedHabits: affectedHabits,
+      targetGroupId: targetGroupId,
+    );
+
+    if (!mounted || count == 0) return;
+    vm.exitEditMode();
+    context.read<AppEventBus>().push(
+      const ReloadDataEvent(
+        msg: "habit_display._executeBatchGroupModify",
+        trace: {
+          AppEventPageSource.habitDisplay: {
+            AppEventFunctionSource.habitChanged,
+          },
+        },
+      ),
+    );
+    context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce(
+      delay: kAppUndoDialogShowDuration * 2,
+    );
+
+    final l10n = L10n.of(context);
+    final snackBar = buildSnackBarWithUndo(
+      context,
+      content: Text(
+        targetGroupId != null
+            ? (l10n?.habitDisplay_groupModify_snackbarText(
+                    count,
+                    targetGroupName ?? '',
+                  ) ??
+                  '')
+            : (l10n?.habitDisplay_groupModify_snackbarTextRemoved(count) ?? ''),
+      ),
+      showDuration: kAppUndoDialogShowDuration,
+      onPressed: () => _undoBatchGroupModify(
+        oldGroupIds: oldGroupIds,
+        newGroupIds: newGroupIds,
+      ),
+    );
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(snackBar);
+  }
+
+  Future<void> _undoBatchGroupModify({
+    required Map<String, GroupUUID?> oldGroupIds,
+    required Map<String, GroupUUID?> newGroupIds,
+  }) async {
+    if (!mounted) return;
+
+    final vm = context.read<HabitSummaryViewModel>();
+    final success = await vm.undoBatchGroupModify(
+      oldGroupIds: oldGroupIds,
+      newGroupIds: newGroupIds,
+    );
+
+    if (!mounted) return;
+
+    if (!success) {
+      final l10n = L10n.of(context);
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              l10n?.habitDisplay_groupModify_undoFailed ??
+                  'Group has been modified elsewhere, cannot undo',
+            ),
+          ),
+        );
+      return;
+    }
+
+    context.read<AppEventBus>().push(
+      const ReloadDataEvent(
+        msg: "habit_display._undoBatchGroupModify",
+        trace: {
+          AppEventPageSource.habitDisplay: {
+            AppEventFunctionSource.habitChanged,
+          },
+        },
+      ),
+    );
+  }
+
   void _onAppbarCloneActionPressed() => _enterHabitEditPage(
     formBuilder: (dbCell) => HabitForm.fromHabitDBCell(
       dbCell.copyWith(
@@ -692,10 +863,42 @@ class HabitsTabPageState extends State<HabitsTabPage>
     context.read<HabitSummaryViewModel>().toggleCalendarStatus();
   }
 
+  String? _findEnclosingGroupUUID(
+    List<HabitSortCache<dynamic>> list,
+    int index,
+  ) {
+    return list
+        .take(index + 1)
+        .whereType<GroupHeaderSortCache>()
+        .lastOrNull
+        ?.groupUUID;
+  }
+
+  void _cancelExpandTimer() {
+    _expandGroupTimer?.cancel();
+    _expandGroupTimer = null;
+  }
+
+  void _startExpandTimer(String? groupUUID, int delayMs) {
+    _cancelExpandTimer();
+    _expandGroupTimer = Timer(Duration(milliseconds: delayMs), () {
+      if (mounted) _vm.expandGroup(groupUUID);
+      _expandGroupTimer = null;
+    });
+  }
+
   bool _onHabitListReorderStart(int index, double dx, double dy) {
     if (!mounted) return false;
 
+    _cancelExpandTimer();
+
     final viewmodel = context.read<HabitSummaryViewModel>();
+
+    if (context.read<HabitsGroupingViewModel>().isGroupingEnabled) {
+      final item = viewmodel.getHabitBySortId(index);
+      if (item is! HabitSummaryDataSortCache) return false;
+    }
+
     if (!viewmodel.canBeDragged) return false;
 
     if (!viewmodel.isInEditMode) {
@@ -719,6 +922,29 @@ class HabitsTabPageState extends State<HabitsTabPage>
     if (!mounted) return false;
 
     final viewmodel = context.read<HabitSummaryViewModel>();
+
+    if (context.read<HabitsGroupingViewModel>().isGroupingEnabled) {
+      final item = viewmodel.getHabitBySortId(index);
+      if (item is! HabitSummaryDataSortCache) return false;
+      final dropItem = viewmodel.getHabitBySortId(dropIndex);
+      if (dropItem is GroupHeaderSortCache) {
+        if (item.data?.groupId == dropItem.groupUUID) {
+          return false;
+        }
+
+        final groupUUID = dropItem.groupUUID;
+        if (viewmodel.isGroupCollapsed(groupUUID)) {
+          _startExpandTimer(
+            groupUUID,
+            context.read<GroupExpandTimerConfigViewModel>().expandDelayMs,
+          );
+        }
+        if (dropIndex == 0) return false;
+      } else {
+        _cancelExpandTimer();
+      }
+    }
+
     if (index != dropIndex && viewmodel.isInEditMode) {
       viewmodel.exitEditModeOnly();
     }
@@ -728,24 +954,65 @@ class HabitsTabPageState extends State<HabitsTabPage>
   bool _onHabitListReorderComplete(int index, int dropIndex, Object? slot) {
     if (!mounted) return false;
 
+    void finishReorder(Future<void> task) => task
+        .then((_) {
+          if (!mounted) return;
+          context.read<HabitSummaryViewModel>().exitEditMode(listen: false);
+          context.read<AppEventBus>().push(
+            const ReloadDataEvent(
+              msg: "habit_display._onHabitListReorderComplete",
+              trace: {
+                AppEventPageSource.habitDisplay: {
+                  AppEventFunctionSource.habitChanged,
+                },
+              },
+            ),
+          );
+          context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
+        })
+        .catchError((Object e, StackTrace s) {
+          if (!mounted) return;
+          context.read<HabitSummaryViewModel>().requestReload();
+          appLog.habit.error(
+            "HabitsTabPage.finishReorder",
+            error: e,
+            stackTrace: s,
+          );
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              buildSnackBarWithDismiss(
+                context,
+                content: const Text('Reorder failed, please try again'),
+              ),
+            );
+        });
+
     final viewmodel = context.read<HabitSummaryViewModel>();
     if (index != dropIndex) {
-      final task = viewmodel.onHabitReorderComplate(index, dropIndex);
-      viewmodel.exitEditMode(listen: false);
-      task.whenComplete(() {
-        if (!mounted) return;
-        context.read<AppEventBus>().push(
-          const ReloadDataEvent(
-            msg: "habit_display._onHabitListReorderComplete",
-            trace: {
-              AppEventPageSource.habitDisplay: {
-                AppEventFunctionSource.habitChanged,
-              },
-            },
-          ),
-        );
-        context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
-      });
+      final groupingEnabled = context
+          .read<HabitsGroupingViewModel>()
+          .isGroupingEnabled;
+
+      if (groupingEnabled) {
+        final list = viewmodel.currentHabitList;
+        final dropItem = viewmodel.getHabitBySortId(dropIndex);
+        if (dropIndex == 0 && dropItem is GroupHeaderSortCache) return true;
+
+        final sourceGroupUUID = _findEnclosingGroupUUID(list, index);
+        final targetGroupUUID =
+            dropItem is GroupHeaderSortCache && index > dropIndex
+            ? _findEnclosingGroupUUID(list, dropIndex - 1)
+            : _findEnclosingGroupUUID(list, dropIndex);
+        if (sourceGroupUUID != targetGroupUUID) {
+          finishReorder(
+            viewmodel.onCrossGroupHabitMove(index, dropIndex, targetGroupUUID),
+          );
+          return true;
+        }
+      }
+
+      finishReorder(viewmodel.onHabitReorderComplate(index, dropIndex));
     } else if (!viewmodel.isInEditMode) {
       viewmodel.exitEditMode(listen: false);
     }
@@ -862,6 +1129,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
                     onClone: _onAppbarCloneActionPressed,
                     onExportAll: _onAppbarExportAllActionPressed,
                     onDelete: _onAppbarDeleteActionPressed,
+                    onGroupModify: _openHabitGroupModifyDialog,
                   ),
                 )
               : Selector<AppExperimentalFeatureViewModel, bool>(
@@ -933,8 +1201,12 @@ class HabitsTabPageState extends State<HabitsTabPage>
           sliver: EnhancedSafeArea.edgeToEdgeSafe(
             withSliver: true,
             child: HabitDisplayDevelopSliverList(
-              onAddCountHabitsPressed: (count) async {
-                await debugAddMultiTempHabit(context, count: count);
+              onAddCountHabitsPressed: (count, withGroups) async {
+                await debugAddMultiTempHabit(
+                  context,
+                  count: count,
+                  withGroups: withGroups,
+                );
                 if (!context.mounted) return;
                 context.read<AppEventBus>().push(
                   const ReloadDataEvent(
@@ -1108,6 +1380,8 @@ class _HabitListState extends State<_HabitList> {
         itemBuilder: (context, element, data) {
           if (data.measuring) {
             return const _HabitListItemMeasurer();
+          } else if (element is GroupHeaderSortCache) {
+            return _GroupHeaderTile(header: element);
           } else if (element is HabitSummaryDataSortCache) {
             return _HabitListItem(
               uuid: element.uuid,
@@ -1205,6 +1479,25 @@ class _HabitListItemMeasurer extends StatelessWidget {
       (vm) => vm.appHabitDisplayListTileHeight,
     );
     return SizedBox(height: height);
+  }
+}
+
+class _GroupHeaderTile extends StatelessWidget {
+  final GroupHeaderSortCache header;
+
+  const _GroupHeaderTile({required this.header});
+
+  @override
+  Widget build(BuildContext context) {
+    final isExpanded = context.select<HabitSummaryViewModel, bool>(
+      (vm) => !vm.isGroupCollapsed(header.groupUUID),
+    );
+    return GroupHeader(
+      header: header,
+      isExpanded: isExpanded,
+      onTap: () =>
+          context.read<HabitSummaryViewModel>().toggleGroup(header.groupUUID),
+    );
   }
 }
 

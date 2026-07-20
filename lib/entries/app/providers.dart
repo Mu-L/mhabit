@@ -27,6 +27,7 @@ import '../../providers/app_ui/app_language.dart';
 import '../../providers/app_ui/app_launch_entry.dart';
 import '../../providers/app_ui/app_theme.dart';
 import '../../providers/app_ui/custom_color_history.dart';
+import '../../providers/app_ui/group_expand_timer_config.dart';
 import '../../providers/app_ui/habit_op_config.dart';
 import '../../providers/app_ui/habits_record_scroll_behavior.dart';
 import '../../providers/support/animation_scale_sync.dart';
@@ -35,6 +36,7 @@ import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_notify_config.dart';
 import '../../providers/workflow/app_reminder.dart';
 import '../../providers/workflow/app_sync.dart';
+import '../../providers/workflow/group_manager.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
 import '../../providers/workflow/habits_file_importer.dart';
 import '../../providers/workflow/habits_manager.dart';
@@ -102,6 +104,20 @@ class AppProviders extends SingleChildStatelessWidget {
     ),
   ];
 
+  Iterable<SingleChildWidget> _buildGroupAppProviders() => [
+    ProxyProvider<DBHelperViewModel, GroupManager>(
+      create: (context) => GroupManager(),
+      update: (context, db, previous) =>
+          (previous ?? GroupManager())..updateDBHelper(db),
+    ),
+    ProxyProvider<GroupManager, GroupExportAccess>(
+      update: (context, value, previous) => value,
+    ),
+    ProxyProvider<GroupManager, GroupImportAccess>(
+      update: (context, value, previous) => value,
+    ),
+  ];
+
   Iterable<SingleChildWidget> _buildAppSyncProviders() => [
     ViewModelProxyProvider3<
       ProfileViewModel,
@@ -143,9 +159,15 @@ class AppProviders extends SingleChildStatelessWidget {
       create: (context) => HabitFileExportRunner(),
       update: (context, value, previous) => previous..attachAccess(value),
     ),
+    ViewModelProxyProvider<GroupExportAccess, HabitFileExportRunner>(
+      update: (context, value, previous) => previous..attachGroupAccess(value),
+    ),
     ViewModelProxyProvider<HabitImportAccess, HabitFileImportRunner>(
       create: (context) => HabitFileImportRunner(),
       update: (context, value, previous) => previous..attachAccess(value),
+    ),
+    ViewModelProxyProvider<GroupImportAccess, HabitFileImportRunner>(
+      update: (context, value, previous) => previous..attachGroupAccess(value),
     ),
     ChangeNotifierProvider<ThirdPartyImportOwner>(
       create: (context) => ThirdPartyImportOwner(),
@@ -208,6 +230,10 @@ class AppProviders extends SingleChildStatelessWidget {
       create: (context) => HabitRecordOpConfigViewModel(),
       update: (context, profile, previous) => previous..updateProfile(profile),
     ),
+    ViewModelProxyProvider<ProfileViewModel, GroupExpandTimerConfigViewModel>(
+      create: (context) => GroupExpandTimerConfigViewModel(),
+      update: (context, profile, previous) => previous..updateProfile(profile),
+    ),
     ViewModelProxyProvider3<
       ProfileViewModel,
       NotificationChannelData,
@@ -244,6 +270,7 @@ class AppProviders extends SingleChildStatelessWidget {
       ..._buildCommonAppProviders(),
       ..._buildReminderWorkflowSupportProviders(),
       ..._buildHabitsAppProviders(),
+      ..._buildGroupAppProviders(),
       ..._buildProfileBackedAppProviders(),
       ..._buildAppSyncProviders(),
       ..._buildRootAdjacentSupportProviders(),

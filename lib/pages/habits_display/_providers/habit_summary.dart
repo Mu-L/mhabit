@@ -30,6 +30,8 @@ import '../../../models/app_event.dart';
 import '../../../models/habit_date.dart';
 import '../../../models/habit_display.dart';
 import '../../../models/habit_form.dart';
+import '../../../models/habit_group.dart';
+import '../../../models/habit_group_display.dart';
 import '../../../models/habit_repo_actions.dart';
 import '../../../models/habit_score.dart';
 import '../../../models/habit_stat.dart';
@@ -39,8 +41,11 @@ import '../../../providers/support/commons.dart';
 import '../../../providers/support/page_load_runtime.dart';
 import '../../../providers/workflow/app_event.dart';
 import '../../../providers/workflow/app_sync.dart';
+import '../../../providers/workflow/group_manager.dart';
 import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
+import '../helpers.dart';
+import 'habit_group_sorter.dart';
 import 'habits_display_reload_bridge.dart';
 
 part 'habit_summary.g.dart';
@@ -74,12 +79,17 @@ class HabitSummaryViewModel extends ChangeNotifier
   bool _isCalandarExpanded = false;
   bool _isInEditMode = false;
   bool _canBeDragged = true;
+  bool _groupingEnabled = false;
   // inside status
   bool _mounted = true;
   // sync from setting
   int _firstday = defaultFirstDay;
   late HabitsDisplayAccess _access;
   final _reloadBridge = HabitsDisplayReloadBridge();
+  late GroupManager _groupManager;
+  GroupCollection? _groupCollection;
+  StreamSubscription<AppEvent>? _groupEventSubscription;
+  final Set<String?> _collapsedGroupUUIDs = {};
   // listenable
   final StreamController<Duration?> _scrollCalendarToStartController =
       StreamController<Duration?>.broadcast();
@@ -153,9 +163,39 @@ class HabitSummaryViewModel extends ChangeNotifier
     return result;
   }
 
+  void attachGroupManager(GroupManager gm) {
+    _groupManager = gm;
+  }
+
+  List<HabitGroupData> groupList() => _groupCollection?.toList() ?? [];
+
+  String? getGroupName(GroupUUID? uuid) =>
+      _groupCollection?.getByUUID(uuid)?.name;
+
+  void updateGroupingEnabled(bool value) {
+    _groupingEnabled = value;
+  }
+
+  bool isGroupCollapsed(String? groupUUID) =>
+      _collapsedGroupUUIDs.contains(groupUUID);
+
+  void toggleGroup(String? groupUUID) {
+    if (_collapsedGroupUUIDs.contains(groupUUID)) {
+      _collapsedGroupUUIDs.remove(groupUUID);
+    } else {
+      _collapsedGroupUUIDs.add(groupUUID);
+    }
+    resortData();
+  }
+
+  void expandGroup(String? groupUUID) {
+    if (_collapsedGroupUUIDs.remove(groupUUID)) resortData();
+  }
+
   @override
   void dispose() {
     if (!_mounted) return;
+    _groupEventSubscription?.cancel();
     _reloadBridge.dispose();
     _scrollCalendarToStartController.close();
     _pageLoad.cancel(logName: "$runtimeType._cancelLoading");
@@ -268,6 +308,15 @@ class HabitSummaryViewModel extends ChangeNotifier
         if (loading.isCanceled) return loadingCancelled(loading);
         if (loading.isCompleted) return;
         _data.forEach((_, habit) => _updateHabitAutoCompleteStatistics(habit));
+
+        // init groups
+        _groupCollection = await _groupManager.tryLoadGroupCollection();
+        if (!mounted) {
+          return loadingFailed(loading, const ["viewmodel disposed"]);
+        }
+        if (loading.isCanceled) return loadingCancelled(loading);
+        if (loading.isCompleted) return;
+
         _resortData();
 
         await _access.repairHabitReminders(
@@ -487,6 +536,14 @@ class HabitSummaryViewModel extends ChangeNotifier
     sortType: sortType,
   );
 
+  void updateGroupOptions(
+    HabitDisplayGroupType groupType,
+    HabitDisplaySortDirection groupDirection,
+  ) => _sortableCache = _sortableCache.copyWith(
+    groupType: groupType,
+    groupDirection: groupDirection,
+  );
+
   void updateHabitDisplayFilter(HabitsDisplayFilter newFilter) =>
       _sortableCache = _sortableCache.copyWith(filter: newFilter);
 
@@ -500,15 +557,50 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   void _resortData() {
-    _replaceSortbaleCache(
-      isInSearchMode
-          ? _sortableCache.copyWithData(
-              _data,
-              searchOptions: searchOptions,
-              filter: HabitsDisplayFilter.allTrue,
-            )
-          : _sortableCache.copyWithData(_data),
+    final searchOpt = isInSearchMode ? searchOptions : null;
+    final statusFilter = isInSearchMode
+        ? HabitsDisplayFilter.allTrue
+        : _sortableCache.filter;
+
+    void replaceWithUngroupedData() => _replaceSortbaleCache(
+      _sortableCache.copyWithData(
+        _data,
+        searchOptions: searchOpt,
+        filter: statusFilter,
+      ),
     );
+
+    if (_groupingEnabled) {
+      if (_groupCollection == null) {
+        replaceWithUngroupedData();
+        return;
+      }
+      final groups = _groupCollection!.toList();
+      final grouped = buildGroupedSortCacheList(
+        data: _data,
+        groups: groups,
+        collapsedUUIDs: _collapsedGroupUUIDs,
+        filter: statusFilter,
+        sortType: _sortableCache.sortType,
+        sortDirection: _sortableCache.sortDirection,
+        groupType: _sortableCache.groupType,
+        groupDirection: _sortableCache.groupDirection,
+      );
+
+      // Degrade to ungrouped display when only the uncategorized
+      // (no-group) section has habits after filtering.
+      final headers = grouped.whereType<GroupHeaderSortCache>();
+      if (headers.length == 1 && headers.first.groupUUID == null) {
+        replaceWithUngroupedData();
+        return;
+      }
+
+      _replaceSortbaleCache(
+        _sortableCache.copyWithGroupedData(grouped, searchOptions: searchOpt),
+      );
+    } else {
+      replaceWithUngroupedData();
+    }
   }
 
   void _replaceSortbaleCache(_HabitsSortableCache newSortbaleCache) {
@@ -529,6 +621,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     }
     _sortableCache = newSortbaleCache;
   }
+
   //#endregion
 
   //#region exporter
@@ -602,6 +695,11 @@ class HabitSummaryViewModel extends ChangeNotifier
   //#region: app event
   @override
   void updateAppEvent(AppEventBus newAppEvent) {
+    _groupEventSubscription?.cancel();
+    _groupEventSubscription = newAppEvent.on<GroupChangedEvent>().listen((_) {
+      requestReload(clearSnackBar: false);
+    });
+
     _reloadBridge.updateAppEvent(
       newAppEvent,
       onReloadData: (event) {
@@ -733,12 +831,36 @@ class HabitSummaryViewModel extends ChangeNotifier
     return result.data;
   }
 
-  Future<void> _writeChangedSortPositionToDB() async {
-    final dataList = currentHabitList
-        .whereType<HabitSummaryDataSortCache>()
-        .map((e) => e.data)
-        .nonNulls
-        .toList();
+  void _applyHabitReorder(int index, int dropIndex) {
+    final moved = currentHabitList.removeAt(index);
+    if (dropIndex > currentHabitList.length) {
+      currentHabitList.add(moved);
+    } else {
+      currentHabitList.insert(dropIndex, moved);
+    }
+  }
+
+  Future<void> _writeChangedSortPositionToDB({
+    required int fromIndex,
+    required int toIndex,
+  }) async {
+    List<HabitUUID> orderedUUIDs;
+    if (_groupingEnabled) {
+      final lo = fromIndex < toIndex ? fromIndex : toIndex;
+      final hi = fromIndex < toIndex ? toIndex : fromIndex;
+      orderedUUIDs = currentHabitList
+          .sublist(lo, hi + 1)
+          .whereType<HabitSummaryDataSortCache>()
+          .map((e) => e.uuid)
+          .toList();
+    } else {
+      orderedUUIDs = currentHabitList
+          .whereType<HabitSummaryDataSortCache>()
+          .map((e) => e.uuid)
+          .toList();
+    }
+
+    final dataList = orderedUUIDs.map(_data.getHabitByUUID).nonNulls.toList();
     if (dataList.isEmpty) return;
 
     final changedUUIDs = await _access.fixAndSaveSortPositions(
@@ -753,9 +875,53 @@ class HabitSummaryViewModel extends ChangeNotifier
     );
   }
 
-  Future<void> onHabitReorderComplate(int index, int dropIndex) {
-    currentHabitList.insert(dropIndex, currentHabitList.removeAt(index));
-    return _writeChangedSortPositionToDB();
+  Future<void> onHabitReorderComplate(int index, int dropIndex) async {
+    _applyHabitReorder(index, dropIndex);
+    await _writeChangedSortPositionToDB(fromIndex: index, toIndex: dropIndex);
+  }
+
+  Future<void> onCrossGroupHabitMove(
+    int sourceIndex,
+    int targetIndex,
+    String? targetGroupUUID,
+  ) async {
+    final movedCache = currentHabitList[sourceIndex];
+    if (movedCache is! HabitSummaryDataSortCache) {
+      if (kDebugMode) {
+        throw StateError(
+          'Expected HabitSummaryDataSortCache at sourceIndex=$sourceIndex, '
+          'got ${movedCache.runtimeType}',
+        );
+      }
+      return;
+    }
+    final movedData = movedCache.data;
+    if (movedData == null) return;
+    final movedUUID = movedData.uuid;
+    final oldGroupId = movedData.groupId;
+
+    _applyHabitReorder(sourceIndex, targetIndex);
+    movedData.groupId = targetGroupUUID;
+
+    final targetGroupData = currentHabitList
+        .whereType<HabitSummaryDataSortCache>()
+        .map((e) => e.data)
+        .nonNulls
+        .where((d) => d.groupId == targetGroupUUID)
+        .toList();
+
+    if (targetGroupData.isNotEmpty) {
+      await _access.fixAndSaveSortPositions(
+        targetGroupData,
+        increaseStep: sortPositionConflictIncreaseStep,
+        decimalPlaces: sortPositionConflictDecimalPlaces,
+      );
+    }
+
+    if (oldGroupId != targetGroupUUID) {
+      await _access.updateHabitGroupIds([movedUUID], [targetGroupUUID]);
+    }
+    resortData();
   }
 
   Future<List<HabitStatusChangedRecord>> _changeHabitsStatus(
@@ -889,6 +1055,72 @@ class HabitSummaryViewModel extends ChangeNotifier
     exitEditMode();
     return result;
   }
+
+  Future<int> executeBatchGroupModify({
+    required List<HabitGroupModifyItem> affectedHabits,
+    required GroupUUID? targetGroupId,
+    bool listen = true,
+  }) async {
+    final changedUUIDs = <String>[];
+    final changedGroupIds = <GroupUUID?>[];
+    for (final h in affectedHabits) {
+      if (h.oldGroupId != targetGroupId) {
+        changedUUIDs.add(h.uuid);
+        changedGroupIds.add(targetGroupId);
+      }
+    }
+
+    if (changedUUIDs.isEmpty) return 0;
+
+    await _access.updateHabitGroupIds(changedUUIDs, changedGroupIds);
+
+    for (final h in affectedHabits) {
+      if (h.oldGroupId != targetGroupId) {
+        final data = getHabit(h.uuid);
+        if (data != null) {
+          data.groupId = targetGroupId;
+        }
+      }
+    }
+    resortData(listen: listen);
+
+    return changedUUIDs.length;
+  }
+
+  Future<bool> undoBatchGroupModify({
+    required Map<String, GroupUUID?> oldGroupIds,
+    required Map<String, GroupUUID?> newGroupIds,
+    bool listen = true,
+  }) async {
+    // Verify no concurrent modification has changed any habit's group.
+    final currentHabits = await _access.loadHabitSummaryCollectionData(
+      habitUUIDs: oldGroupIds.keys.toList(),
+    );
+    for (final data in currentHabits.values) {
+      if (data.groupId != newGroupIds[data.uuid]) return false;
+    }
+
+    final revertUUIDs = <String>[];
+    final revertGroupIds = <GroupUUID?>[];
+    for (final entry in oldGroupIds.entries) {
+      if (entry.value != newGroupIds[entry.key]) {
+        revertUUIDs.add(entry.key);
+        revertGroupIds.add(entry.value);
+      }
+    }
+
+    if (revertUUIDs.isEmpty) return true;
+    await _access.updateHabitGroupIds(revertUUIDs, revertGroupIds);
+
+    for (final (i, uuid) in revertUUIDs.indexed) {
+      final data = getHabit(uuid);
+      if (data != null) {
+        data.groupId = revertGroupIds[i];
+      }
+    }
+    resortData(listen: listen);
+    return true;
+  }
   //#endregion
 
   //#region debug
@@ -905,12 +1137,16 @@ class _HabitsSortableCache {
   final HabitDisplaySortType sortType;
   final HabitDisplaySortDirection sortDirection;
   final HabitsDisplayFilter filter;
+  final HabitDisplayGroupType groupType;
+  final HabitDisplaySortDirection groupDirection;
   final List<HabitSortCache> lastSortedDataCache;
 
   const _HabitsSortableCache({
     required this.sortType,
     required this.sortDirection,
     required this.filter,
+    this.groupType = defaultGroupType,
+    this.groupDirection = defaultGroupSortDirection,
     this.lastSortedDataCache = const [],
   });
 
@@ -931,15 +1167,27 @@ class _HabitsSortableCache {
         .sort(sortType, sortDirection)
         .where((filter ?? this.filter).displayFilterFunction);
     if (searchOptions != null) {
-      final keywords = searchOptions.keyword
-          .toUpperCase()
-          .split(' ')
-          .whereNot((e) => e.isEmpty);
       sorted = sorted.where(
-        (e) => searchOptions.filter(e, caps: true, keywords: keywords),
+        (e) => searchOptions.filter(
+          e,
+          caps: true,
+          keywords: searchOptions.splitKeywords,
+        ),
       );
     }
     return copyWith(lastSortedDataCache: sorted.toHabitSummarySortCacheList());
+  }
+
+  _HabitsSortableCache copyWithGroupedData(
+    List<HabitSortCache<dynamic>> sorted, {
+    HabitDisplaySearchOptions? searchOptions,
+  }) {
+    var result = sorted;
+    if (searchOptions != null) {
+      result = filterGroupedList(result, searchOptions);
+      updateGroupHeaderCounts(result);
+    }
+    return copyWith(lastSortedDataCache: result);
   }
 
   @override

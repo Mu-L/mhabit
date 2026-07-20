@@ -18,9 +18,11 @@ import 'package:mhabit/pages/app_settings/page.dart';
 import 'package:mhabit/providers/app_ui/app_compact_ui_switcher.dart';
 import 'package:mhabit/providers/app_ui/app_custom_date_format.dart';
 import 'package:mhabit/providers/app_ui/app_developer.dart';
+import 'package:mhabit/providers/app_ui/app_experimental_feature.dart';
 import 'package:mhabit/providers/app_ui/app_first_day.dart';
 import 'package:mhabit/providers/app_ui/app_language.dart';
 import 'package:mhabit/providers/app_ui/app_theme.dart';
+import 'package:mhabit/providers/app_ui/group_expand_timer_config.dart';
 import 'package:mhabit/providers/app_ui/habit_op_config.dart';
 import 'package:mhabit/providers/app_ui/habits_record_scroll_behavior.dart';
 import 'package:mhabit/providers/support/global.dart';
@@ -77,8 +79,11 @@ void main() {
       ..updateProfile(profile);
     final recordOpConfig = HabitRecordOpConfigViewModel()
       ..updateProfile(profile);
+    final experimentalFeature = AppExperimentalFeatureViewModel()
+      ..updateProfile(profile);
 
     addTearDown(() {
+      experimentalFeature.dispose();
       recordOpConfig.dispose();
       scrollBehavior.dispose();
       language.dispose();
@@ -115,6 +120,13 @@ void main() {
           ),
           ChangeNotifierProvider<HabitRecordOpConfigViewModel>.value(
             value: recordOpConfig,
+          ),
+          ChangeNotifierProvider<AppExperimentalFeatureViewModel>.value(
+            value: experimentalFeature,
+          ),
+          ChangeNotifierProvider<GroupExpandTimerConfigViewModel>(
+            create: (_) =>
+                GroupExpandTimerConfigViewModel()..updateProfile(profile),
           ),
           ListenableProvider<AppSyncTriggerAccess>.value(value: syncAccess),
           ListenableProvider<AppSyncStatusSource>.value(value: syncAccess),

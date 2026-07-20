@@ -141,6 +141,7 @@ abstract class _$WebDavSyncHabitDataCWProxy {
     int? startDate,
     int? targetDays,
     HabitSortPostion? sortPostion,
+    String? groupId,
     String? sessionId,
     Map<HabitRecordUUID, WebDavSyncRecordData> records,
     String? etag,
@@ -186,6 +187,7 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
     Object? startDate = const $CopyWithPlaceholder(),
     Object? targetDays = const $CopyWithPlaceholder(),
     Object? sortPostion = const $CopyWithPlaceholder(),
+    Object? groupId = const $CopyWithPlaceholder(),
     Object? sessionId = const $CopyWithPlaceholder(),
     Object? records = const $CopyWithPlaceholder(),
     Object? etag = const $CopyWithPlaceholder(),
@@ -278,6 +280,10 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
           ? _value.sortPostion
           // ignore: cast_nullable_to_non_nullable
           : sortPostion as HabitSortPostion?,
+      groupId: groupId == const $CopyWithPlaceholder()
+          ? _value.groupId
+          // ignore: cast_nullable_to_non_nullable
+          : groupId as String?,
       sessionId: sessionId == const $CopyWithPlaceholder()
           ? _value.sessionId
           // ignore: cast_nullable_to_non_nullable
@@ -308,6 +314,145 @@ extension $WebDavSyncHabitDataCopyWith on WebDavSyncHabitData {
   // ignore: library_private_types_in_public_api
   _$WebDavSyncHabitDataCWProxy get copyWith =>
       _$WebDavSyncHabitDataCWProxyImpl(this);
+}
+
+abstract class _$WebDavSyncGroupDataCWProxy {
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  ///
+  /// Example:
+  /// ```dart
+  /// WebDavSyncGroupData(...).copyWith(id: 12, name: "My name")
+  /// ```
+  WebDavSyncGroupData call({
+    int schemaVersion,
+    String? uuid,
+    int? createT,
+    int? modifyT,
+    String? name,
+    String? desc,
+    int? icon,
+    int? color,
+    int? customColor,
+    int? customColorTinted,
+    int? status,
+    String? sessionId,
+    String? etag,
+    int? dirty,
+    int? dirtyTotal,
+    Map<String, dynamic>? unknown,
+  });
+}
+
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfWebDavSyncGroupData.copyWith(...)`.
+class _$WebDavSyncGroupDataCWProxyImpl implements _$WebDavSyncGroupDataCWProxy {
+  const _$WebDavSyncGroupDataCWProxyImpl(this._value);
+
+  final WebDavSyncGroupData _value;
+
+  @override
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  ///
+  /// Example:
+  /// ```dart
+  /// WebDavSyncGroupData(...).copyWith(id: 12, name: "My name")
+  /// ```
+  WebDavSyncGroupData call({
+    Object? schemaVersion = const $CopyWithPlaceholder(),
+    Object? uuid = const $CopyWithPlaceholder(),
+    Object? createT = const $CopyWithPlaceholder(),
+    Object? modifyT = const $CopyWithPlaceholder(),
+    Object? name = const $CopyWithPlaceholder(),
+    Object? desc = const $CopyWithPlaceholder(),
+    Object? icon = const $CopyWithPlaceholder(),
+    Object? color = const $CopyWithPlaceholder(),
+    Object? customColor = const $CopyWithPlaceholder(),
+    Object? customColorTinted = const $CopyWithPlaceholder(),
+    Object? status = const $CopyWithPlaceholder(),
+    Object? sessionId = const $CopyWithPlaceholder(),
+    Object? etag = const $CopyWithPlaceholder(),
+    Object? dirty = const $CopyWithPlaceholder(),
+    Object? dirtyTotal = const $CopyWithPlaceholder(),
+    Object? unknown = const $CopyWithPlaceholder(),
+  }) {
+    return WebDavSyncGroupData(
+      schemaVersion:
+          schemaVersion == const $CopyWithPlaceholder() || schemaVersion == null
+          ? _value.schemaVersion
+          // ignore: cast_nullable_to_non_nullable
+          : schemaVersion as int,
+      uuid: uuid == const $CopyWithPlaceholder()
+          ? _value.uuid
+          // ignore: cast_nullable_to_non_nullable
+          : uuid as String?,
+      createT: createT == const $CopyWithPlaceholder()
+          ? _value.createT
+          // ignore: cast_nullable_to_non_nullable
+          : createT as int?,
+      modifyT: modifyT == const $CopyWithPlaceholder()
+          ? _value.modifyT
+          // ignore: cast_nullable_to_non_nullable
+          : modifyT as int?,
+      name: name == const $CopyWithPlaceholder()
+          ? _value.name
+          // ignore: cast_nullable_to_non_nullable
+          : name as String?,
+      desc: desc == const $CopyWithPlaceholder()
+          ? _value.desc
+          // ignore: cast_nullable_to_non_nullable
+          : desc as String?,
+      icon: icon == const $CopyWithPlaceholder()
+          ? _value.icon
+          // ignore: cast_nullable_to_non_nullable
+          : icon as int?,
+      color: color == const $CopyWithPlaceholder()
+          ? _value.color
+          // ignore: cast_nullable_to_non_nullable
+          : color as int?,
+      customColor: customColor == const $CopyWithPlaceholder()
+          ? _value.customColor
+          // ignore: cast_nullable_to_non_nullable
+          : customColor as int?,
+      customColorTinted: customColorTinted == const $CopyWithPlaceholder()
+          ? _value.customColorTinted
+          // ignore: cast_nullable_to_non_nullable
+          : customColorTinted as int?,
+      status: status == const $CopyWithPlaceholder()
+          ? _value.status
+          // ignore: cast_nullable_to_non_nullable
+          : status as int?,
+      sessionId: sessionId == const $CopyWithPlaceholder()
+          ? _value.sessionId
+          // ignore: cast_nullable_to_non_nullable
+          : sessionId as String?,
+      etag: etag == const $CopyWithPlaceholder()
+          ? _value.etag
+          // ignore: cast_nullable_to_non_nullable
+          : etag as String?,
+      dirty: dirty == const $CopyWithPlaceholder()
+          ? _value.dirty
+          // ignore: cast_nullable_to_non_nullable
+          : dirty as int?,
+      dirtyTotal: dirtyTotal == const $CopyWithPlaceholder()
+          ? _value.dirtyTotal
+          // ignore: cast_nullable_to_non_nullable
+          : dirtyTotal as int?,
+      unknown: unknown == const $CopyWithPlaceholder()
+          ? _value.unknown
+          // ignore: cast_nullable_to_non_nullable
+          : unknown as Map<String, dynamic>?,
+    );
+  }
+}
+
+extension $WebDavSyncGroupDataCopyWith on WebDavSyncGroupData {
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfWebDavSyncGroupData.copyWith(...)`.
+  // ignore: library_private_types_in_public_api
+  _$WebDavSyncGroupDataCWProxy get copyWith =>
+      _$WebDavSyncGroupDataCWProxyImpl(this);
 }
 
 // **************************************************************************
@@ -365,6 +510,7 @@ WebDavSyncHabitData _$WebDavSyncHabitDataFromJson(Map<String, dynamic> json) =>
       startDate: (json['start_date'] as num?)?.toInt(),
       targetDays: (json['target_days'] as num?)?.toInt(),
       sortPostion: json['sort_position'] as num?,
+      groupId: json['group_id'] as String?,
       sessionId: json['sessionId'] as String?,
       records: json['records'] == null
           ? const {}
@@ -395,8 +541,42 @@ Map<String, dynamic> _$WebDavSyncHabitDataToJson(
   'start_date': instance.startDate,
   'target_days': instance.targetDays,
   'sort_position': instance.sortPostion,
+  'group_id': instance.groupId,
   'sessionId': instance.sessionId,
   'records': WebDavSyncHabitData._recordsToJson(instance.records),
+};
+
+WebDavSyncGroupData _$WebDavSyncGroupDataFromJson(Map<String, dynamic> json) =>
+    WebDavSyncGroupData(
+      schemaVersion: (json['_schema_version'] as num?)?.toInt() ?? 1,
+      uuid: json['uuid'] as String?,
+      createT: (json['create_t'] as num?)?.toInt(),
+      modifyT: (json['modify_t'] as num?)?.toInt(),
+      name: json['name'] as String?,
+      desc: json['desc'] as String?,
+      icon: (json['icon'] as num?)?.toInt(),
+      color: (json['color'] as num?)?.toInt(),
+      customColor: (json['custom_color'] as num?)?.toInt(),
+      customColorTinted: (json['custom_color_tinted'] as num?)?.toInt(),
+      status: (json['status'] as num?)?.toInt(),
+      sessionId: json['sessionId'] as String?,
+    );
+
+Map<String, dynamic> _$WebDavSyncGroupDataToJson(
+  WebDavSyncGroupData instance,
+) => <String, dynamic>{
+  '_schema_version': instance.schemaVersion,
+  'uuid': instance.uuid,
+  'create_t': instance.createT,
+  'modify_t': instance.modifyT,
+  'name': instance.name,
+  'desc': instance.desc,
+  'icon': instance.icon,
+  'color': instance.color,
+  'custom_color': instance.customColor,
+  'custom_color_tinted': instance.customColorTinted,
+  'status': instance.status,
+  'sessionId': instance.sessionId,
 };
 
 // **************************************************************************

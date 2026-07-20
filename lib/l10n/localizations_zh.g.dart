@@ -391,6 +391,100 @@ class L10nZh extends L10n {
   String get habitDisplay_mainMenu_settingTileText => '设置';
 
   @override
+  String get habitDisplay_groupType_name => '名称';
+
+  @override
+  String get habitDisplay_groupType_colorType => '颜色';
+
+  @override
+  String get habitDisplay_groupType_createDate => '创建日期';
+
+  @override
+  String get habitDisplay_groupTypeDialog_title => '分组排序';
+
+  @override
+  String get habitDisplay_groupTypeDialog_confirm => '确定';
+
+  @override
+  String get habitDisplay_groupTypeDialog_cancel => '取消';
+
+  @override
+  String get habitDisplay_groupTypeDialog_none => '平铺';
+
+  @override
+  String get habitDisplay_editPopMenu_groupModify => '修改分组';
+
+  @override
+  String get habitDisplay_groupModifyDialog_title => '修改分组';
+
+  @override
+  String get habitDisplay_groupModifyDialog_removeGroup => '移除分组';
+
+  @override
+  String get habitDisplay_groupModifyDialog_emptyGroups => '暂无分组';
+
+  @override
+  String get habitDisplay_groupModifyDialog_alreadyInGroup => '所选习惯已在该分组中';
+
+  @override
+  String get habitDisplay_groupModifyDialog_createGroup => '创建分组';
+
+  @override
+  String get habitDisplay_groupModifyDialog_saveAndApply => '保存并应用';
+
+  @override
+  String get habitDisplay_groupModifyConfirm_titleNew => '确认移动至分组';
+
+  @override
+  String get habitDisplay_groupModifyConfirm_titleMixed => '确认修改分组';
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyNewGroup(String groupName) {
+    return '以下习惯将移动至「$groupName」';
+  }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_bodyRemoveGroup => '移除以下习惯的分组';
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyChangeStat(
+    int count,
+    String fromGroup,
+    String toGroup,
+  ) {
+    return '$count 个习惯将由「$fromGroup」修改至「$toGroup」';
+  }
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyAddStat(
+    int count,
+    String toGroup,
+  ) {
+    return '$count 个习惯将由未分类新增至「$toGroup」';
+  }
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyRemoveStat(int count) {
+    return '$count 个习惯将移除分组';
+  }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_nameSeparator => '、';
+
+  @override
+  String habitDisplay_groupModify_snackbarText(int count, String groupName) {
+    return '已移动 $count 个习惯至「$groupName」';
+  }
+
+  @override
+  String habitDisplay_groupModify_snackbarTextRemoved(int count) {
+    return '已移除 $count 个习惯的分组';
+  }
+
+  @override
+  String get habitDisplay_groupModify_undoFailed => '分组已被其他操作修改，无法撤销';
+
+  @override
   String get habitDisplay_sort_reverseText => '反向排序';
 
   @override
@@ -742,6 +836,22 @@ class L10nZh extends L10n {
       '修改主页面上打开每日记录详情弹窗的点击行为。';
 
   @override
+  String get appSetting_expandTimerDelayTile_titleText => '分组展开延迟';
+
+  @override
+  String get appSetting_expandTimerDelayTile_subtitleText =>
+      '拖拽习惯到折叠的分组标题上时，自动展开分组的延迟时间。';
+
+  @override
+  String get appSetting_expandTimerDelay_default => '默认';
+
+  @override
+  String get appSetting_expandTimerDelay_fast => '快';
+
+  @override
+  String get appSetting_expandTimerDelay_slow => '慢';
+
+  @override
   String get appSetting_appThemeColorTile_titleText => '主题颜色';
 
   @override
@@ -860,6 +970,22 @@ class L10nZh extends L10n {
   String get appSetting_importDialog_confirmSubtitle => '注意：导入不会删除现有的习惯。';
 
   @override
+  String get appSetting_importDialog_option_includeHabits => '包含习惯';
+
+  @override
+  String get appSetting_importDialog_option_includeGroups => '包含分组';
+
+  @override
+  String appSetting_importDialog_tile_includeHabits(int count) {
+    return '包含 $count 个习惯';
+  }
+
+  @override
+  String appSetting_importDialog_tile_includeGroups(int count) {
+    return '包含 $count 个分组';
+  }
+
+  @override
   String appSetting_importConfirmDialog_sourceLabel(String provider) {
     return '来源: $provider';
   }
@@ -893,6 +1019,11 @@ class L10nZh extends L10n {
   @override
   String appSetting_importDialog_completeTitle(int count) {
     return '完成导入 $count 个习惯';
+  }
+
+  @override
+  String appSetting_importDialog_completeTitleGroups(int count) {
+    return '完成导入 $count 个分组';
   }
 
   @override
@@ -1595,6 +1726,9 @@ class L10nZh extends L10n {
   String get common_enable_text => '启用';
 
   @override
+  String get common_dontShowAgain => '不再提示';
+
+  @override
   String get calendarPicker_clip_today => '今天';
 
   @override
@@ -1624,6 +1758,19 @@ class L10nZh extends L10n {
 
   @override
   String get exportConfirmDialog_option_includeRecords => '包含习惯记录';
+
+  @override
+  String get exportConfirmDialog_option_includeGroups => '包含分组';
+
+  @override
+  String exportConfirmDialog_tile_includeRecords(int count) {
+    return '包含 $count 条记录';
+  }
+
+  @override
+  String exportConfirmDialog_tile_includeGroups(int count) {
+    return '导出 $count 个分组';
+  }
 
   @override
   String get exportConfirmDialog_cancel_buttonText => '取消';
@@ -1774,6 +1921,118 @@ class L10nZh extends L10n {
 
   @override
   String get changelog_view_full => '查看完整更新日志';
+
+  @override
+  String get habitGroup_uncategorized => '无分组';
+
+  @override
+  String get habitDetail_groupTile_title => '分组';
+
+  @override
+  String get habitEdit_groupTile_title => '分组';
+
+  @override
+  String get habitEdit_groupPicker_hintText => '搜索或创建分组';
+
+  @override
+  String get habitEdit_groupPicker_noGroup => '无分组';
+
+  @override
+  String habitEdit_groupPicker_createGroup(String name) {
+    return '创建「$name」';
+  }
+
+  @override
+  String get habitEdit_groupPicker_loading => '分组加载中…';
+
+  @override
+  String get groupManage_appbar_title => '管理分组';
+
+  @override
+  String groupManage_selectionAppbar_title(int count) {
+    return '已选择 $count 项';
+  }
+
+  @override
+  String get groupManage_emptyState_text => '暂无分组\n点击 + 创建你的第一个分组';
+
+  @override
+  String get groupManage_deleteDialog_title => '删除分组';
+
+  @override
+  String groupManage_deleteDialog_content(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 个分组内的习惯将变为未分类。',
+      one: '该分组内的习惯将变为未分类。',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get groupManage_deleteDialog_confirm => '删除';
+
+  @override
+  String get groupManage_deleteDialog_cancel => '取消';
+
+  @override
+  String get groupManage_deleted_snackbarText => '分组已删除';
+
+  @override
+  String get groupManage_undo_snackbarAction => '撤销';
+
+  @override
+  String get groupManage_editDialog_title => '编辑分组';
+
+  @override
+  String get groupManage_createDialog_title => '创建分组';
+
+  @override
+  String get groupManage_nameRequired => '名称为必填';
+
+  @override
+  String groupManage_nameTooLong(int max) {
+    return '名称不能超过 $max 个字符';
+  }
+
+  @override
+  String get groupManage_name_label => '名称';
+
+  @override
+  String get groupManage_desc_label => '描述';
+
+  @override
+  String groupManage_descTooLong(int max) {
+    return '描述不应超过 $max 个字符';
+  }
+
+  @override
+  String get groupManage_sortTile_text => '排序分组';
+
+  @override
+  String get groupManage_sectionTitle_text => '分组';
+
+  @override
+  String get groupManage_createDateTile_title => '创建日期';
+
+  @override
+  String get groupManage_modifyDateTile_title => '修改日期';
+
+  @override
+  String get groupManage_icon_label => '图标';
+
+  @override
+  String get groupManage_icon_none => '无';
+
+  @override
+  String get groupManage_color_label => '颜色';
+
+  @override
+  String get groupManage_color_none => '无';
+
+  @override
+  String get appSetting_manageGroups_subtitleText => '创建、编辑和删除习惯分组';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -2118,6 +2377,100 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get habitDisplay_mainMenu_settingTileText => '設定';
+
+  @override
+  String get habitDisplay_groupType_name => '依名稱';
+
+  @override
+  String get habitDisplay_groupType_colorType => '依顏色';
+
+  @override
+  String get habitDisplay_groupType_createDate => '建立日期';
+
+  @override
+  String get habitDisplay_groupTypeDialog_title => '分組排序';
+
+  @override
+  String get habitDisplay_groupTypeDialog_confirm => '確認';
+
+  @override
+  String get habitDisplay_groupTypeDialog_cancel => '取消';
+
+  @override
+  String get habitDisplay_groupTypeDialog_none => '平鋪';
+
+  @override
+  String get habitDisplay_editPopMenu_groupModify => '修改分組';
+
+  @override
+  String get habitDisplay_groupModifyDialog_title => '修改分組';
+
+  @override
+  String get habitDisplay_groupModifyDialog_removeGroup => '移除分組';
+
+  @override
+  String get habitDisplay_groupModifyDialog_emptyGroups => '暫無分組';
+
+  @override
+  String get habitDisplay_groupModifyDialog_alreadyInGroup => '所選習慣已在該分組中';
+
+  @override
+  String get habitDisplay_groupModifyDialog_createGroup => '建立分組';
+
+  @override
+  String get habitDisplay_groupModifyDialog_saveAndApply => '儲存並套用';
+
+  @override
+  String get habitDisplay_groupModifyConfirm_titleNew => '確認移動至分組';
+
+  @override
+  String get habitDisplay_groupModifyConfirm_titleMixed => '確認修改分組';
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyNewGroup(String groupName) {
+    return '以下習慣將移動至「$groupName」';
+  }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_bodyRemoveGroup => '移除以下習慣的分組';
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyChangeStat(
+    int count,
+    String fromGroup,
+    String toGroup,
+  ) {
+    return '$count 個習慣將由「$fromGroup」修改至「$toGroup」';
+  }
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyAddStat(
+    int count,
+    String toGroup,
+  ) {
+    return '$count 個習慣將由未分類新增至「$toGroup」';
+  }
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyRemoveStat(int count) {
+    return '$count 個習慣將移除分組';
+  }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_nameSeparator => '、';
+
+  @override
+  String habitDisplay_groupModify_snackbarText(int count, String groupName) {
+    return '已移動 $count 個習慣至「$groupName」';
+  }
+
+  @override
+  String habitDisplay_groupModify_snackbarTextRemoved(int count) {
+    return '已移除 $count 個習慣的分組';
+  }
+
+  @override
+  String get habitDisplay_groupModify_undoFailed => '分組已被其他操作修改，無法撤銷';
 
   @override
   String get habitDisplay_sort_reverseText => '反向';
@@ -2476,6 +2829,22 @@ class L10nZhHant extends L10nZh {
       '修改點選行為以開啟主頁面上每日記錄的詳細彈出視窗。';
 
   @override
+  String get appSetting_expandTimerDelayTile_titleText => '分組展開延遲';
+
+  @override
+  String get appSetting_expandTimerDelayTile_subtitleText =>
+      '拖曳習慣到摺疊的分組標題上時，自動展開分組的延遲時間。';
+
+  @override
+  String get appSetting_expandTimerDelay_default => '預設';
+
+  @override
+  String get appSetting_expandTimerDelay_fast => '快';
+
+  @override
+  String get appSetting_expandTimerDelay_slow => '慢';
+
+  @override
   String get appSetting_appThemeColorTile_titleText => '主題顏色';
 
   @override
@@ -2594,6 +2963,22 @@ class L10nZhHant extends L10nZh {
   String get appSetting_importDialog_confirmSubtitle => '注意：匯入不會刪除現有的習慣。';
 
   @override
+  String get appSetting_importDialog_option_includeHabits => '包含習慣';
+
+  @override
+  String get appSetting_importDialog_option_includeGroups => '包含分組';
+
+  @override
+  String appSetting_importDialog_tile_includeHabits(int count) {
+    return '包含 $count 個習慣';
+  }
+
+  @override
+  String appSetting_importDialog_tile_includeGroups(int count) {
+    return '包含 $count 個分組';
+  }
+
+  @override
   String appSetting_importConfirmDialog_sourceLabel(String provider) {
     return '來源: $provider';
   }
@@ -2626,7 +3011,7 @@ class L10nZhHant extends L10nZh {
 
   @override
   String appSetting_importDialog_completeTitle(int count) {
-    return '完成匯入 $count 個';
+    return '完成匯入 $count 個習慣';
   }
 
   @override
@@ -3039,6 +3424,9 @@ class L10nZhHant extends L10nZh {
   String get common_errorPage_copied => '已複製當機資訊';
 
   @override
+  String get common_dontShowAgain => '不再提示';
+
+  @override
   String get calendarPicker_clip_today => '今天';
 
   @override
@@ -3069,6 +3457,19 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get exportConfirmDialog_option_includeRecords => '包含記錄';
+
+  @override
+  String get exportConfirmDialog_option_includeGroups => '包含分組';
+
+  @override
+  String exportConfirmDialog_tile_includeRecords(int count) {
+    return '包含 $count 筆記錄';
+  }
+
+  @override
+  String exportConfirmDialog_tile_includeGroups(int count) {
+    return '匯出 $count 個分組';
+  }
 
   @override
   String get exportConfirmDialog_cancel_buttonText => '取消';
@@ -3184,4 +3585,113 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get changelog_view_full => '檢視完整更新日誌';
+
+  @override
+  String get habitGroup_uncategorized => '無分組';
+
+  @override
+  String get habitDetail_groupTile_title => '分組';
+
+  @override
+  String get habitEdit_groupTile_title => '分組';
+
+  @override
+  String get habitEdit_groupPicker_hintText => '搜尋或建立分組';
+
+  @override
+  String get habitEdit_groupPicker_noGroup => '無分組';
+
+  @override
+  String habitEdit_groupPicker_createGroup(String name) {
+    return '建立「$name」';
+  }
+
+  @override
+  String get habitEdit_groupPicker_loading => '分組載入中…';
+
+  @override
+  String get groupManage_appbar_title => '管理分組';
+
+  @override
+  String groupManage_selectionAppbar_title(int count) {
+    return '已選擇 $count 項';
+  }
+
+  @override
+  String get groupManage_emptyState_text => '暫無分組\n點擊 + 建立你的第一個分組';
+
+  @override
+  String get groupManage_deleteDialog_title => '刪除分組';
+
+  @override
+  String groupManage_deleteDialog_content(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 個分組內的習慣將變為未分類。',
+      one: '該分組內的習慣將變為未分類。',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get groupManage_deleteDialog_confirm => '刪除';
+
+  @override
+  String get groupManage_deleted_snackbarText => '分組已刪除';
+
+  @override
+  String get groupManage_undo_snackbarAction => '復原';
+
+  @override
+  String get groupManage_editDialog_title => '編輯分組';
+
+  @override
+  String get groupManage_createDialog_title => '建立分組';
+
+  @override
+  String get groupManage_nameRequired => '名稱為必填';
+
+  @override
+  String groupManage_nameTooLong(int max) {
+    return '名稱不能超過 $max 個字元';
+  }
+
+  @override
+  String get groupManage_name_label => '名稱';
+
+  @override
+  String get groupManage_desc_label => '描述';
+
+  @override
+  String groupManage_descTooLong(int max) {
+    return '描述不應超過 $max 個字元';
+  }
+
+  @override
+  String get groupManage_sortTile_text => '排序分組';
+
+  @override
+  String get groupManage_sectionTitle_text => '分組';
+
+  @override
+  String get groupManage_createDateTile_title => '建立日期';
+
+  @override
+  String get groupManage_modifyDateTile_title => '修改日期';
+
+  @override
+  String get groupManage_icon_label => '圖示';
+
+  @override
+  String get groupManage_icon_none => '無';
+
+  @override
+  String get groupManage_color_label => '依顏色';
+
+  @override
+  String get groupManage_color_none => '無';
+
+  @override
+  String get appSetting_manageGroups_subtitleText => '建立、編輯和刪除習慣分組';
 }

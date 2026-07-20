@@ -48,6 +48,15 @@ Map<String, Object?> _baseDbRow(String uuid, String name) => {
   'sort_position': 1,
 };
 
+/// Minimum required fields for [WebDavSyncGroupData.fromJson] to produce a
+/// valid [GroupDBCell] that satisfies DB NOT NULL constraints.
+Map<String, Object?> _baseGroupPayload(String uuid, String name) => {
+  '_convert_type': 'group_',
+  'uuid': uuid,
+  'name': name,
+  'status': 1,
+};
+
 void main() {
   group('Sync round-trip DB integration', () {
     late DBHelperViewModel viewModel;
@@ -68,7 +77,7 @@ void main() {
     test('syncHabitDataToDb stores unknown in sync_extras column', () async {
       final data = WebDavSyncHabitData.fromJson({
         ..._basePayload('download-test-uuid', 'Download Test'),
-        'group_id': 'g-db-test',
+        'unknown_group_id': 'g-db-test',
         'future_field': 42,
       });
 
@@ -82,7 +91,7 @@ void main() {
       final extrasJson = rows.first['sync_extras'] as String?;
       expect(extrasJson, isNotNull);
       final extras = jsonDecode(extrasJson!) as Map<String, dynamic>;
-      expect(extras['group_id'], 'g-db-test');
+      expect(extras['unknown_group_id'], 'g-db-test');
       expect(extras['future_field'], 42);
     });
 
@@ -108,7 +117,10 @@ void main() {
       // Seed: insert habit + sync row directly via raw SQL
       await viewModel.local.db.insert('mh_habits', {
         ..._baseDbRow('upload-test-uuid', 'Upload Test'),
-        'sync_extras': jsonEncode({'group_id': 'g-upload', 'extra': 42}),
+        'sync_extras': jsonEncode({
+          'unknown_group_id': 'g-upload',
+          'extra': 42,
+        }),
       });
       await viewModel.local.db.insert('mh_sync', {
         'habit_uuid': 'upload-test-uuid',
@@ -125,11 +137,11 @@ void main() {
 
       expect(data, isNotNull);
       expect(data!.unknown, isNotNull);
-      expect(data.unknown!['group_id'], 'g-upload');
+      expect(data.unknown!['unknown_group_id'], 'g-upload');
       expect(data.unknown!['extra'], 42);
 
       final json = data.toJson();
-      expect(json['group_id'], 'g-upload');
+      expect(json['unknown_group_id'], 'g-upload');
       expect(json['extra'], 42);
     });
 
@@ -161,7 +173,7 @@ void main() {
     test('full DB round-trip preserves unknown fields', () async {
       final original = WebDavSyncHabitData.fromJson({
         ..._basePayload('full-db-roundtrip', 'Original'),
-        'group_id': 'g-full',
+        'unknown_group_id': 'g-full',
         'custom_attr': [1, 2, 3],
       });
 
@@ -181,10 +193,10 @@ void main() {
       expect(restored.name, 'Original');
 
       expect(restored.unknown, isNotNull);
-      expect(restored.unknown!['group_id'], 'g-full');
+      expect(restored.unknown!['unknown_group_id'], 'g-full');
       expect(restored.unknown!['custom_attr'], [1, 2, 3]);
       final restoredJson = restored.toJson();
-      expect(restoredJson['group_id'], 'g-full');
+      expect(restoredJson['unknown_group_id'], 'g-full');
       expect(restoredJson['custom_attr'], [1, 2, 3]);
     });
 
@@ -192,7 +204,7 @@ void main() {
       final firstDownload = WebDavSyncHabitData.fromJson({
         ..._basePayload('clear-stale-uuid', 'Stale Extras'),
         'sessionId': 'server-session-1',
-        'group_id': 'g-stale',
+        'unknown_group_id': 'g-stale',
       });
       await syncHelper.syncHabitDataToDb(firstDownload);
 
@@ -218,7 +230,7 @@ void main() {
 
       expect(restored, isNotNull);
       expect(restored!.unknown, isNull);
-      expect(restored.toJson().containsKey('group_id'), isFalse);
+      expect(restored.toJson().containsKey('unknown_group_id'), isFalse);
     });
 
     test('second download with partial unknown prunes removed fields', () async {
@@ -267,5 +279,222 @@ void main() {
       expect(restoredJson.containsKey('removed_field'), isFalse);
       expect(restoredJson['kept_field'], 99);
     });
+
+    test(
+      'syncGroupDataToDb inserts and loadGroupDataFromDb reads it back',
+      () async {
+        final groupData = WebDavSyncGroupData.fromJson(
+          _baseGroupPayload('group-roundtrip-uuid', 'Roundtrip Group'),
+        ).copyWith(etag: 'etag-1', sessionId: 'server-session-1');
+
+        final inserted = await syncHelper.group.syncGroupDataToDb(
+          groupData,
+          configId: 'cfg',
+          sessionId: 'session',
+        );
+        expect(inserted, isTrue);
+
+        final restored = await syncHelper.group.loadGroupDataFromDb(
+          'group-roundtrip-uuid',
+          configId: 'cfg',
+          sessionId: 'session',
+        );
+        expect(restored, isNotNull);
+        expect(restored!.uuid, 'group-roundtrip-uuid');
+        expect(restored.name, 'Roundtrip Group');
+        expect(restored.etag, 'etag-1');
+      },
+    );
+
+    test('clearGroupDirtyMark keeps newer local edits dirty', () async {
+      final groupData = WebDavSyncGroupData.fromJson(
+        _baseGroupPayload('group-clear-uuid', 'Group Clear'),
+      ).copyWith(etag: 'etag-1', sessionId: 'server-session-1');
+      await syncHelper.group.syncGroupDataToDb(
+        groupData,
+        configId: 'cfg',
+        sessionId: 'session',
+      );
+
+      final snapshot = await syncHelper.group.loadGroupDataFromDb(
+        'group-clear-uuid',
+        configId: 'cfg',
+        sessionId: 'session',
+      );
+      expect(snapshot, isNotNull);
+
+      await viewModel.local.db.rawUpdate(
+        'UPDATE mh_sync '
+        'SET dirty = dirty + 1, dirty_total = COALESCE(dirty_total, 0) + 1 '
+        'WHERE group_uuid = ?',
+        ['group-clear-uuid'],
+      );
+
+      await syncHelper.group.clearGroupDirtyMark(
+        snapshot!,
+        etag: 'etag-2',
+        configId: 'cfg',
+        sessionId: 'session',
+      );
+
+      final rows = await viewModel.local.db.query(
+        'mh_sync',
+        where: 'group_uuid = ?',
+        whereArgs: ['group-clear-uuid'],
+      );
+      expect(rows, hasLength(1));
+      expect(rows.first['dirty'], 1);
+      expect(rows.first['dirty_total'], 1);
+      expect(rows.first['last_mark_2'], 'etag-2');
+    });
+
+    test('group status=2 soft delete roundtrip is preserved', () async {
+      final active = WebDavSyncGroupData.fromJson(
+        _baseGroupPayload('group-soft-delete-uuid', 'Soft Delete Group'),
+      ).copyWith(etag: 'etag-active', sessionId: 'server-session-active');
+      await syncHelper.group.syncGroupDataToDb(
+        active,
+        configId: 'cfg',
+        sessionId: 'session',
+      );
+
+      final deleted = WebDavSyncGroupData.fromJson({
+        ..._baseGroupPayload('group-soft-delete-uuid', 'Soft Delete Group'),
+        'status': 2,
+      }).copyWith(etag: 'etag-deleted', sessionId: 'server-session-deleted');
+      await syncHelper.group.syncGroupDataToDb(
+        deleted,
+        configId: 'cfg',
+        sessionId: 'session',
+      );
+
+      final restored = await syncHelper.group.loadGroupDataFromDb(
+        'group-soft-delete-uuid',
+        configId: 'cfg',
+        sessionId: 'session',
+      );
+      expect(restored, isNotNull);
+      expect(restored!.status, 2);
+      expect(restored.etag, 'etag-deleted');
+    });
+
+    test(
+      'group update with same etag does not overwrite local edits',
+      () async {
+        final initial = WebDavSyncGroupData.fromJson(
+          _baseGroupPayload('group-same-etag-uuid', 'Initial Name'),
+        ).copyWith(etag: 'etag-same', sessionId: 'server-session-1');
+        await syncHelper.group.syncGroupDataToDb(
+          initial,
+          configId: 'cfg',
+          sessionId: 'session',
+        );
+
+        await viewModel.local.db.update(
+          'mh_groups',
+          {'name': 'Locally Edited Name'},
+          where: 'uuid = ?',
+          whereArgs: ['group-same-etag-uuid'],
+        );
+
+        final sameEtagPayload = WebDavSyncGroupData.fromJson(
+          _baseGroupPayload('group-same-etag-uuid', 'Server Name Should Skip'),
+        ).copyWith(etag: 'etag-same', sessionId: 'server-session-2');
+        await syncHelper.group.syncGroupDataToDb(
+          sameEtagPayload,
+          configId: 'cfg',
+          sessionId: 'session',
+        );
+
+        final rows = await viewModel.local.db.query(
+          'mh_groups',
+          columns: ['name'],
+          where: 'uuid = ?',
+          whereArgs: ['group-same-etag-uuid'],
+        );
+        expect(rows, hasLength(1));
+        expect(rows.first['name'], 'Locally Edited Name');
+      },
+    );
+
+    test(
+      'loadGroupDataFromDb returns passed sessionId when dirty > 0',
+      () async {
+        final groupData = WebDavSyncGroupData.fromJson(
+          _baseGroupPayload('group-dirty-uuid', 'Group Dirty'),
+        ).copyWith(etag: 'etag-1', sessionId: 'server-session-1');
+        await syncHelper.group.syncGroupDataToDb(
+          groupData,
+          configId: 'cfg',
+          sessionId: 'session',
+        );
+
+        // Mark as dirty
+        await viewModel.local.db.rawUpdate(
+          'UPDATE mh_sync '
+          'SET dirty = 1 '
+          'WHERE group_uuid = ?',
+          ['group-dirty-uuid'],
+        );
+
+        // Load with different sessionId should return the passed sessionId
+        final loaded = await syncHelper.group.loadGroupDataFromDb(
+          'group-dirty-uuid',
+          configId: 'cfg',
+          sessionId: 'passed-session-when-dirty',
+        );
+        expect(loaded, isNotNull);
+        expect(loaded!.sessionId, 'passed-session-when-dirty');
+      },
+    );
+
+    test(
+      'loadGroupDataFromDb returns passed sessionId when configId mismatch',
+      () async {
+        final groupData = WebDavSyncGroupData.fromJson(
+          _baseGroupPayload(
+            'group-config-mismatch-uuid',
+            'Group Config Mismatch',
+          ),
+        ).copyWith(etag: 'etag-1', sessionId: 'server-session-1');
+        await syncHelper.group.syncGroupDataToDb(
+          groupData,
+          configId: 'cfg1',
+          sessionId: 'session',
+        );
+
+        // Load with different configId should return the passed sessionId
+        final loaded = await syncHelper.group.loadGroupDataFromDb(
+          'group-config-mismatch-uuid',
+          configId: 'cfg2', // different configId
+          sessionId: 'passed-session-on-config-mismatch',
+        );
+        expect(loaded, isNotNull);
+        expect(loaded!.sessionId, 'passed-session-on-config-mismatch');
+      },
+    );
+
+    test(
+      'loadGroupDataFromDb returns stored sessionId when clean and configId matches',
+      () async {
+        final groupData = WebDavSyncGroupData.fromJson(
+          _baseGroupPayload('group-clean-uuid', 'Group Clean'),
+        ).copyWith(etag: 'etag-1', sessionId: 'stored-server-session');
+        await syncHelper.group.syncGroupDataToDb(
+          groupData,
+          configId: 'cfg',
+          sessionId: 'session',
+        );
+
+        // Load with matching configId and clean state should return stored sessionId
+        final loaded = await syncHelper.group.loadGroupDataFromDb(
+          'group-clean-uuid',
+          configId: 'cfg', // matching configId
+          sessionId: 'passed-session-but-should-ignore',
+        );
+        expect(loaded, isNotNull);
+        expect(loaded!.sessionId, 'stored-server-session');
+      },
+    );
   });
 }

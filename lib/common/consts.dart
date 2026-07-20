@@ -25,6 +25,7 @@ import '../models/app_reminder_config.dart';
 import '../models/app_sync_options.dart';
 import '../models/habit_display.dart';
 import '../models/habit_form.dart';
+import '../models/habit_group_display.dart';
 import '../theme/color.dart';
 import 'enums.dart';
 
@@ -54,7 +55,9 @@ const String appSyncFailedZipFile = "app_sync_failed.zip";
 /// - add custom_color and custom_color_tinted columns
 /// ## version 6
 /// - add sync_extras column
-const int appDBVersion = 6;
+/// ## version 7
+/// - add mh_groups table and mh_habits.group_id column
+const int appDBVersion = 7;
 //#endregion
 
 //#region app-theme
@@ -107,6 +110,8 @@ const appLocalizationsDelegates = <LocalizationsDelegate>[
 //#region app-setting
 const defaultSortType = HabitDisplaySortType.manual;
 const defaultSortDirection = HabitDisplaySortDirection.asc;
+const defaultGroupType = HabitDisplayGroupType.createDate;
+const defaultGroupSortDirection = HabitDisplaySortDirection.asc;
 const defaultHabitsRecordScrollBehavior = HabitsRecordScrollBehavior.scrollable;
 const defaultFirstDay = DateTime.monday;
 const defaultAppReminder = AppReminderConfig.off;
@@ -194,6 +199,12 @@ const kRecordUnknownStatusIcon = Icons.question_mark_outlined;
 const kRecordSkipStatusIcon = Icons.remove_outlined;
 const kRecordDoneStatusIcon = Icons.check_outlined;
 const kRecordZeroStatusIcon = Icons.close_sharp;
+//#endregion
+
+//#region groups
+const noGroupIcon = Icons.circle_outlined;
+const defaultGroupIcon = Icons.circle;
+const hideGroupingIcon = Icons.segment;
 //#endregion
 
 //#region other

@@ -17,17 +17,23 @@ import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_display.dart';
+import '../../../models/habit_group_display.dart';
 import '../../../providers/app_ui/app_theme.dart';
 import '../../../providers/app_ui/habits_filter.dart';
 import '../../../providers/app_ui/habits_sort.dart';
 import '../../../theme/color.dart';
 import '../../../theme/icon.dart';
+import '../../../widgets/widgets.dart';
+import '../_providers/habits_grouping.dart';
 
 Future<HabitDisplayMainMenuDialogOpr?> showHabitDisplayMainMenuDialog({
   required BuildContext context,
   required HabitDisplaySortType sortType,
   required HabitDisplaySortDirection sortDirection,
+  required HabitDisplayGroupType? groupType,
+  required HabitDisplaySortDirection groupDirection,
   required HabitsFilterViewModel habitFilter,
+  required HabitsGroupingViewModel grouping,
   required AppThemeViewModel appTheme,
 }) async {
   return showDialog<HabitDisplayMainMenuDialogOpr>(
@@ -36,11 +42,14 @@ Future<HabitDisplayMainMenuDialogOpr?> showHabitDisplayMainMenuDialog({
       providers: [
         ChangeNotifierProvider.value(value: appTheme),
         ChangeNotifierProvider.value(value: habitFilter),
+        ChangeNotifierProvider.value(value: grouping),
       ],
       child: HabitDisplayMainMenuDialog(
         themeType: context.read<AppThemeViewModel>().themeType,
         sortType: sortType,
         sortDirection: sortDirection,
+        groupType: groupType,
+        groupDirection: groupDirection,
         onAppThemeModePressed: (brightness) {
           context.read<AppThemeViewModel>().onTapChangeThemeType(brightness);
         },
@@ -49,12 +58,19 @@ Future<HabitDisplayMainMenuDialogOpr?> showHabitDisplayMainMenuDialog({
   );
 }
 
-enum HabitDisplayMainMenuDialogOpr { none, showSortMenu, openSettings }
+enum HabitDisplayMainMenuDialogOpr {
+  none,
+  showSortMenu,
+  showGroupMenu,
+  openSettings,
+}
 
 class HabitDisplayMainMenuDialog extends StatefulWidget {
   final AppThemeType themeType;
   final HabitDisplaySortType sortType;
   final HabitDisplaySortDirection sortDirection;
+  final HabitDisplayGroupType? groupType;
+  final HabitDisplaySortDirection groupDirection;
   final void Function(Brightness brightness)? onAppThemeModePressed;
 
   const HabitDisplayMainMenuDialog({
@@ -62,6 +78,8 @@ class HabitDisplayMainMenuDialog extends StatefulWidget {
     required this.themeType,
     required this.sortType,
     required this.sortDirection,
+    required this.groupType,
+    required this.groupDirection,
     this.onAppThemeModePressed,
   });
 
@@ -109,6 +127,17 @@ class _HabitDisplayMainMenuDialog extends State<HabitDisplayMainMenuDialog> {
             onPressed: () => _naviPopWithOp(
               context,
               HabitDisplayMainMenuDialogOpr.showSortMenu,
+            ),
+          ),
+          ExperimentalFeatureGate.basic(
+            selector: (context, vm) => vm.habitGrouping,
+            enabledBuilder: (context) => _GroupingTypeListTile(
+              groupType: widget.groupType,
+              groupDirection: widget.groupDirection,
+              onPressed: () => _naviPopWithOp(
+                context,
+                HabitDisplayMainMenuDialogOpr.showGroupMenu,
+              ),
             ),
           ),
           const Divider(),
@@ -186,15 +215,15 @@ class _SortTypeListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
     return ListTile(
       iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
       leading: Icon(HabitsSortViewModel.getSortIcon(sortType, sortDirection)),
-      title: Text(
-        HabitsSortViewModel.getSortTitle(
-          sortType,
-          sortDirection,
-          l10n: L10n.of(context),
-        ),
+      title: l10n != null
+          ? Text(l10n.habitDisplay_sortTypeDialog_title)
+          : const Text("Sort"),
+      subtitle: Text(
+        HabitsSortViewModel.getSortTitle(sortType, sortDirection, l10n: l10n),
       ),
       trailing: const Icon(Icons.arrow_right_outlined),
       onTap: onPressed,
@@ -293,6 +322,35 @@ class _SettingListTile extends StatelessWidget {
           : const Text("Settings"),
       leading: const Icon(Icons.settings_outlined),
       iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
+      onTap: onPressed,
+    );
+  }
+}
+
+class _GroupingTypeListTile extends StatelessWidget {
+  final HabitDisplayGroupType? groupType;
+  final HabitDisplaySortDirection groupDirection;
+  final VoidCallback? onPressed;
+
+  const _GroupingTypeListTile({
+    required this.groupType,
+    required this.groupDirection,
+    this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    return ListTile(
+      iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
+      leading: Icon(HabitsGroupingViewModel.getIcon(groupType, groupDirection)),
+      title: l10n != null
+          ? Text(l10n.habitDisplay_groupTypeDialog_title)
+          : const Text("Group Sort"),
+      subtitle: Text(
+        HabitsGroupingViewModel.getTitle(groupType, groupDirection, l10n: l10n),
+      ),
+      trailing: const Icon(Icons.arrow_right_outlined),
       onTap: onPressed,
     );
   }
